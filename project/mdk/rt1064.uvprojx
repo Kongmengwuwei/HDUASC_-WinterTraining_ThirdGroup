@@ -408,6 +408,58 @@
         </Group>
         <Group>
           <GroupName>code</GroupName>
+          <Files>
+            <File>
+              <FileName>buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\buzzer.c</FilePath>
+            </File>
+            <File>
+              <FileName>buzzer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\code\buzzer.h</FilePath>
+            </File>
+            <File>
+              <FileName>flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\code\flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>menu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\menu.c</FilePath>
+            </File>
+            <File>
+              <FileName>menu.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\code\menu.h</FilePath>
+            </File>
+            <File>
+              <FileName>mpu6050.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\mpu6050.c</FilePath>
+            </File>
+            <File>
+              <FileName>mpu6050.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\code\mpu6050.h</FilePath>
+            </File>
+            <File>
+              <FileName>pit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\pit.c</FilePath>
+            </File>
+            <File>
+              <FileName>pit.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\code\pit.h</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>doc</GroupName>

@@ -7,11 +7,13 @@ static uint8_t key_handled[4] = {0};
 
 void Menu_Init(void)
 {
-	ips200_set_dir(IPS200_PORTAIT);
+	//显示配置
+	ips200_set_dir(IPS200_PORTAIT);       
 	ips200_set_font(IPS200_8X16_FONT);
 	ips200_set_color(RGB565_WHITE, RGB565_BLACK);
 	ips200_init(IPS200_TYPE);
 	interrupt_global_enable(0);
+	//初始显示
 	ips200_show_string(0,0,"-->");
 	ips200_show_string(24,0,"kp=");
 	ips200_show_string(24,16,"ki=");
@@ -22,13 +24,13 @@ void Menu_MoveCursor(int8_t dir, uint8_t min_row, uint8_t max_row)
 {
 	uint8_t new_cursor = menu_cursor;
 
-	if (dir == -1) { 
+	if (dir == -1) {        //指针上移
 		if (new_cursor > min_row) {
 			new_cursor-=16;
 		} else {
 			new_cursor = max_row;
 		}
-	} else if (dir == 1) { 
+	} else if (dir == 1) {  //指针下移
 		if (new_cursor < max_row) {
 			new_cursor+=16;
 		} else {

@@ -7,6 +7,7 @@
 #define min 			0
 #define max 			32
 #define IPS200_TYPE		(IPS200_TYPE_SPI)
+
 extern float num[];
 
 void Menu_Init(void);
