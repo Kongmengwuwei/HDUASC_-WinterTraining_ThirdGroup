@@ -1,7 +1,7 @@
 #include "flash.h"
 #include "math.h"
 
-void Flash_Upload(void)				//读取存储的数据
+void Flash_Upload(void)				//存储数据
 {
 	flash_buffer_clear();
 	flash_union_buffer[0].float_type = num[0];
@@ -11,7 +11,7 @@ void Flash_Upload(void)				//读取存储的数据
 	flash_write_page_from_buffer(FLASH_SECTION_INDEX, FLASH_PAGE_INDEX);
 }
 
-void Flash_Download(void)			//存储数据
+void Flash_Download(void)			//读取存储的数据
 {
 	flash_read_page_to_buffer(FLASH_SECTION_INDEX, FLASH_PAGE_INDEX);
 	num[0] = flash_union_buffer[0].float_type;
