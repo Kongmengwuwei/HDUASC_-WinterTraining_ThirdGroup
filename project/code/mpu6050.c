@@ -1,13 +1,16 @@
 #include "mpu6050.h"
 
-uint8 mpuflag = 0;
-float ax,ay,az,gx,gy,gz;
+uint8 mpuflag = 0;						//MPU正常初始化标识
+float ax,ay,az,gx,gy,gz;				//6轴数据
 
+/*MPU初始化*/
 void Mpu6050_Init(void)
 {
-	if(!mpu6050_init())mpuflag = 1;
+	if(!mpu6050_init())					//正常初始化返回0
+		mpuflag = 1;
 }
 
+/*MPU读取*/
 void Mpu6050_Read(void)
 {
 	if(mpuflag)
@@ -19,8 +22,9 @@ void Mpu6050_Read(void)
 	}
 }
 
+/*MPU数据屏幕显示*/
 void Mpu6050_Show(void)
 {
-	ips200_show_float(0,48,ax,3,1);ips200_show_float(56,48,ay,3,1);ips200_show_float(112,48,az,3,1);
-	ips200_show_float(0,64,gx,3,1);ips200_show_float(56,64,gy,3,1);ips200_show_float(112,64,gz,3,1);
+	ips200_show_float(0,64,ax,3,1);ips200_show_float(56,64,ay,3,1);ips200_show_float(112,64,az,3,1);
+	ips200_show_float(0,80,gx,3,1);ips200_show_float(56,80,gy,3,1);ips200_show_float(112,80,gz,3,1);
 }

@@ -1,24 +1,44 @@
 #include "flash.h"
-#include "math.h"
+#include "menu.h"
 
-void Flash_Upload(void)				//读取存储的数据
+/*Flash上传*/
+void Flash_Upload(void)
 {
 	flash_buffer_clear();
-	flash_union_buffer[0].float_type = num[0];
-	flash_union_buffer[1].float_type = num[1];
-	flash_union_buffer[2].float_type = num[2];
+	
+	uint8_t index = 0;													//按索引读取
+	
+	for(uint8_t mode = 0; mode < MODE_COUNT; mode++)
+	{
+		for(uint8_t num = 0; num < PID_COUNT; num++)
+		{
+			flash_union_buffer[index].float_type = pidnum[mode][num];
+			index++;
+		}
+	}
+	
 	flash_erase_page(FLASH_SECTION_INDEX, FLASH_PAGE_INDEX);
 	flash_write_page_from_buffer(FLASH_SECTION_INDEX, FLASH_PAGE_INDEX);
 }
 
-void Flash_Download(void)			//存储数据
+/*Flash下载*/
+void Flash_Download(void)
 {
 	flash_read_page_to_buffer(FLASH_SECTION_INDEX, FLASH_PAGE_INDEX);
-	num[0] = flash_union_buffer[0].float_type;
-	num[1] = flash_union_buffer[1].float_type;
-	num[2] = flash_union_buffer[2].float_type;
 	
-	if (isnan(num[0]) || isinf(num[0])) num[0] = 0.0f;
-	if (isnan(num[1]) || isinf(num[1])) num[1] = 0.0f;
-	if (isnan(num[2]) || isinf(num[2])) num[2] = 0.0f;
+	uint8_t index = 0;													//按索引赋值
+	
+for(uint8_t mode = 0; mode < MODE_COUNT; mode++)
+    {
+        for(uint8_t num = 0; num < PID_COUNT; num++)
+        {
+            pidnum[mode][num] = flash_union_buffer[index].float_type;
+            
+            if(isnan(pidnum[mode][num]) || isinf(pidnum[mode][num]))	//检验函数（数值异常时才用，一般用不到）
+            {
+                pidnum[mode][num] = 0.0f;
+            }
+            index++;
+        }
+    }
 }
