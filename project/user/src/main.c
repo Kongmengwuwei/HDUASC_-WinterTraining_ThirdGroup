@@ -13,25 +13,24 @@
 #include "mpu6050.h"
 #include "Motor.h"
 
-int16 encoder_data_1 = 0;
-int16 encoder_data_2 = 0;
+//int16 encoder_data_1 = 0;
+//int16 encoder_data_2 = 0;
 
 int main(void)
 {
 	clock_init(SYSTEM_CLOCK_600M);	// 不可删除
 	debug_init();					// 调试端口初始化
 	
+	Buzzer_Init();
+//	Motor_Init();
 	flash_init();
-	
 	key_init(10);
 	Menu_Init();
-	Buzzer_Init();
+	
 	Mpu6050_Init();
-//	Motor_Init();
 	Pit_Init();
 	
 	interrupt_global_enable(0);
-	
 	while(1)
 	{
 		Menu_Update();
