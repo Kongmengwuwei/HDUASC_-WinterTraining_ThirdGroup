@@ -1,52 +1,82 @@
 #include "zf_common_headfile.h"
 
-// 打开新的工程或者工程移动了位置务必执行以下操作
-// 第一步 关闭上面所有打开的文件
-// 第二步 project->clean  等待下方进度条走完
-
-// 本例程是开源库移植用空工程
-
 #include "pit.h"
 #include "menu.h"
 #include "buzzer.h"
 #include "flash.h"
 #include "mpu6050.h"
 #include "Motor.h"
+#include "pid.h"
 
-//int16 encoder_data_1 = 0;
-//int16 encoder_data_2 = 0;
+uint8 RunFlag;
+int16 LeftPWM, RightPWM;
+int16 AvePWM, DifPWM;
+// int16 encoder_data_1 = 0;
+// int16 encoder_data_2 = 0;
+
+PID_t AnglePID = {
+	.Kp = 0,
+	.Ki = 0,
+	.Kd = 0,
+	
+	.OutMax = 100,
+	.OutMin = -100,
+};
 
 int main(void)
 {
-	clock_init(SYSTEM_CLOCK_600M);	// 不可删除
-	debug_init();					// 调试端口初始化
-	
+	clock_init(SYSTEM_CLOCK_600M); 
+	debug_init();
+
 	Buzzer_Init();
-//	Motor_Init();
 	flash_init();
 	key_init(10);
 	Menu_Init();
-	
 	Mpu6050_Init();
+	//Motor_Init();
 	Pit_Init();
-	
+
 	interrupt_global_enable(0);
-	while(1)
+	while (1)
 	{
 		Menu_Update();
 		Mpu6050_Show();
 	}
 }
 
-void pit_handler (void)			//定时中断
+void pit_handler(void)
 {
 	key_scanner();
 	Mpu6050_Read();
 	
-//	encoder_data_1 = encoder_get_count(ENCODER_1);                              // 获取编码器计数
-//  encoder_clear_count(ENCODER_1);                                             // 清空编码器计数
+	if (pitch > 50 || pitch < -50)
+	{
+		RunFlag = 0;
+	}
+	
+	if (RunFlag)
+	{
+		AnglePID.Actual = pitch;
+		PID_Update(&AnglePID);
+		AvePWM = -AnglePID.Out;
+		
+		LeftPWM = AvePWM + DifPWM / 2;
+		RightPWM = AvePWM - DifPWM / 2;
+		
+		if (LeftPWM > 100) {LeftPWM = 100;} else if (LeftPWM < -100) {LeftPWM = -100;}
+		if (RightPWM > 100) {RightPWM = 100;} else if (RightPWM < -100) {RightPWM = -100;}
+		
+		Set_Moter1(LeftPWM);
+		Set_Moter2(RightPWM);
+	}
+	else
+	{
+		Set_Moter1(0);
+		Set_Moter2(0);
+	}
+	//	encoder_data_1 = encoder_get_count(ENCODER_1);                              // ?????????????
+	//  encoder_clear_count(ENCODER_1);                                             // ????????????
 
-//  encoder_data_2 = encoder_get_count(ENCODER_2);                              // 获取编码器计数
-//  encoder_clear_count(ENCODER_2);                                             // 清空编码器计数
+	//  encoder_data_2 = encoder_get_count(ENCODER_2);                              // ?????????????
+	//  encoder_clear_count(ENCODER_2);                                             // ????????????
 }
-

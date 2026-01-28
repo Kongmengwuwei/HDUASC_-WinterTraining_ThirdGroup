@@ -3,7 +3,6 @@
 
 #include "zf_common_headfile.h"
 
-#define MAX_DUTY                 (50 )                // 最大 MAX_DUTY% 占空比
 #define MOTOR1_1                 (C9 )
 #define MOTOR1_2                 (D0)
 #define MOTOR1_PWM               (PWM2_MODULE1_CHA_C8)

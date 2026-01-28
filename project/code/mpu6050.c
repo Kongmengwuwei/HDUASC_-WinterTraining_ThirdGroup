@@ -39,8 +39,12 @@ void Mpu6050_Read(void)
 		
 		mpu6050_get_acc();
 		mpu6050_get_gyro();
-		ax = mpu6050_acc_transition(mpu6050_acc_x);ay = mpu6050_acc_transition(mpu6050_acc_y);az = mpu6050_acc_transition(mpu6050_acc_z);
-		gx = mpu6050_gyro_transition(mpu6050_gyro_x);gy = mpu6050_gyro_transition(mpu6050_gyro_y);gz = mpu6050_gyro_transition(mpu6050_gyro_z);
+		ax = mpu6050_acc_transition(mpu6050_acc_x);
+	  ay = mpu6050_acc_transition(mpu6050_acc_y);
+	  az = mpu6050_acc_transition(mpu6050_acc_z);
+		gx = mpu6050_gyro_transition(mpu6050_gyro_x);
+	  gy = mpu6050_gyro_transition(mpu6050_gyro_y);
+	  gz = mpu6050_gyro_transition(mpu6050_gyro_z);
 }
 
 /*MPUÊý¾ÝÆÁÄ»ÏÔÊ¾*/
