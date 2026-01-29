@@ -18,13 +18,13 @@ void Set_Moter1(int16 pwm1)							//设置1号电机（？轮）
 {
 	if(pwm1>=0)
 	{
-		gpio_set_level(MOTOR1_1, GPIO_HIGH);
-		gpio_set_level(MOTOR1_2, GPIO_LOW);
+		gpio_set_level(MOTOR1_1, GPIO_LOW);
+		gpio_set_level(MOTOR1_2, GPIO_HIGH);
 		pwm_set_duty(MOTOR1_PWM, pwm1 * (PWM_DUTY_MAX / 100));
 	}else
 	{
-		gpio_set_level(MOTOR1_1, GPIO_LOW);
-		gpio_set_level(MOTOR1_2, GPIO_HIGH);
+		gpio_set_level(MOTOR1_1, GPIO_HIGH);
+		gpio_set_level(MOTOR1_2, GPIO_LOW);
 		pwm_set_duty(MOTOR1_PWM, -pwm1 * (PWM_DUTY_MAX / 100));	
 	}
 }
@@ -33,13 +33,13 @@ void Set_Moter2(int16 pwm2)							//设置2号电机（？轮）
 {
 	if(pwm2>=0)
 	{
-		gpio_set_level(MOTOR2_1, GPIO_HIGH);
-		gpio_set_level(MOTOR2_2, GPIO_LOW);
-		pwm_set_duty(MOTOR1_PWM, pwm2 * (PWM_DUTY_MAX / 100));
-	}else
-	{
 		gpio_set_level(MOTOR2_1, GPIO_LOW);
 		gpio_set_level(MOTOR2_2, GPIO_HIGH);
-		pwm_set_duty(MOTOR1_PWM, -pwm2 * (PWM_DUTY_MAX / 100));	
+		pwm_set_duty(MOTOR2_PWM, pwm2 * (PWM_DUTY_MAX / 100));
+	}else
+	{
+		gpio_set_level(MOTOR2_1, GPIO_HIGH);
+		gpio_set_level(MOTOR2_2, GPIO_LOW);
+		pwm_set_duty(MOTOR2_PWM, -pwm2 * (PWM_DUTY_MAX / 100));	
 	}
 }

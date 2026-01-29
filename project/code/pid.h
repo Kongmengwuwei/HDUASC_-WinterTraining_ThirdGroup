@@ -16,6 +16,9 @@ typedef struct {
 	float Error1;
 	float ErrorInt;
 	
+	float ErrorIntMax;
+	float ErrorIntMin;
+	
 	float OutMax;
 	float OutMin;
 } PID_t;

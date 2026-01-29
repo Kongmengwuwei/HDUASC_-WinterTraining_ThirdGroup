@@ -207,11 +207,11 @@ uint8 mpu6050_init (void)
             break;
         }
         mpu6050_write_register(MPU6050_PWR_MGMT_1, 0x00);                       // 解除休眠状态
-        mpu6050_write_register(MPU6050_SMPLRT_DIV, 0x07);                       // 125HZ采样率
-        mpu6050_write_register(MPU6050_CONFIG, 0x04);
+        mpu6050_write_register(MPU6050_SMPLRT_DIV, 0x04);                       // 125HZ采样率
+        mpu6050_write_register(MPU6050_CONFIG, 0x00);
 
         mpu6050_write_register(MPU6050_GYRO_CONFIG, MPU6050_GYR_SAMPLE);        // 2000
-        // GYRO_CONFIG寄存器
+        // GYRO_CONFIG寄存
         // 设置为:0x00 陀螺仪量程为:±250 dps     获取到的陀螺仪数据除以131.2         可以转化为带物理单位的数据，单位为：°/s
         // 设置为:0x08 陀螺仪量程为:±500 dps     获取到的陀螺仪数据除以65.6          可以转化为带物理单位的数据，单位为：°/s
         // 设置为:0x10 陀螺仪量程为:±1000dps     获取到的陀螺仪数据除以32.8          可以转化为带物理单位的数据，单位为：°/s

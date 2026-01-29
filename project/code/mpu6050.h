@@ -3,7 +3,10 @@
 
 #include "zf_common_headfile.h"
 
-#define MPU_ADDR    0x68
+#define MPU_ADDR			0x68
+#define WARMUP_COUNT		500
+#define CALIBRATE_COUNT		100
+#define STABLE_THRESHOLD	0.5f
 
 extern uint8 mpuflag;
 extern float ax,ay,az,gx,gy,gz;
@@ -13,6 +16,7 @@ uint8 MPU_Write_Len(uint8 addr, uint8 reg, uint8 len, uint8 *buf);
 uint8 MPU_Read_Len(uint8 addr, uint8 reg, uint8 len, uint8 *buf);
 
 void Mpu6050_Init(void);
+void Mpu6050_Calibrate(void);
 void Mpu6050_Read(void);
 void Mpu6050_Show(void);
 
