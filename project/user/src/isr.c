@@ -148,6 +148,8 @@ void LPUART8_IRQHandler(void)
 {
     if(kLPUART_RxDataRegFullFlag & LPUART_GetStatusFlags(LPUART8))
     {
+				extern void uart_rx_interrupt_handler();
+		    uart_rx_interrupt_handler();
         // Ω” ’÷–∂œ
         wireless_module_uart_handler();
         
