@@ -8,15 +8,17 @@ void Flash_Upload(void)
 	
 	uint8_t index = 0;													//按索引读取
 	
-	for(uint8_t mode = 0; mode < MODE_COUNT; mode++)
+	for(uint8_t mode = 0; mode < 5; mode++)
 	{
-		for(uint8_t num = 0; num < PID_COUNT; num++)
+		for(uint8_t num = 0; num < 4; num++)
 		{
-			flash_union_buffer[index].float_type = pidnum[mode][num];
-			index++;
+			for(uint8_t row = 0; row < 3; row++)
+			{
+				flash_union_buffer[index].float_type = pidnum[mode][num][row];
+				index++;
+			}
 		}
 	}
-	
 	flash_erase_page(FLASH_SECTION_INDEX, FLASH_PAGE_INDEX);
 	flash_write_page_from_buffer(FLASH_SECTION_INDEX, FLASH_PAGE_INDEX);
 }
@@ -28,17 +30,20 @@ void Flash_Download(void)
 	
 	uint8_t index = 0;													//按索引赋值
 	
-for(uint8_t mode = 0; mode < MODE_COUNT; mode++)
-    {
-        for(uint8_t num = 0; num < PID_COUNT; num++)
-        {
-            pidnum[mode][num] = flash_union_buffer[index].float_type;
-            
-            if(isnan(pidnum[mode][num]) || isinf(pidnum[mode][num]))	//检验函数（数值异常时才用，一般用不到）
-            {
-                pidnum[mode][num] = 0.0f;
-            }
-            index++;
-        }
-    }
+for(uint8_t mode = 0; mode < 5; mode++)
+	{
+		for(uint8_t num = 0; num < 4; num++)
+		{
+			for(uint8_t row = 0; row < 3;row++)
+			{
+				pidnum[mode][num][row] = flash_union_buffer[index].float_type;
+				
+				if(isnan(pidnum[mode][num][row]) || isinf(pidnum[mode][num][row]))	//检验函数（数值异常时才用，一般用不到）
+				{
+					pidnum[mode][num][row] = 0.0f;
+				}
+				index++;
+			}
+		}
+	}
 }
