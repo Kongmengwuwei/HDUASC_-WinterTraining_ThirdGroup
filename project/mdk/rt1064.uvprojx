@@ -499,6 +499,16 @@
               <FileType>5</FileType>
               <FilePath>..\code\bluetooth.h</FilePath>
             </File>
+            <File>
+              <FileName>key_handler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\key_handler.c</FilePath>
+            </File>
+            <File>
+              <FileName>key_handler.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\code\key_handler.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

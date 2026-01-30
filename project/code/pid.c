@@ -7,27 +7,27 @@ uint8 RunFlag = 1;
 int16 LeftPWM = 0, RightPWM = 0;
 int16 AvePWM = 0, DifPWM = 0;
 float LeftSpeed = 0, RightSpeed = 0;
-float AveSpeed = 0, DifSpeed = 0;
+float aveSpeed = 0,  AveSpeed = 0, Last_AveSpeed = 0,DifSpeed = 0;
 
 PID_t AnglePID = {
-	.Kp = 0,
-	.Ki = 0,
-	.Kd = 0,
 	
 	.OutMax = 100,
 	.OutMin = -100,
 };
 
 PID_t SpeedPID = {
-	.Kp = 0,
-	.Ki = 0,
-	.Kd = 0,
-	
+
 	.OutMax = 20,
 	.OutMin = -20,
 	
 	.ErrorIntMax = 150,
 	.ErrorIntMin = -150,
+};
+
+PID_t TurnPID = {
+	
+	.OutMax = 0,
+	.OutMin = -50,
 };
 
 void PID_Init(PID_t *p)
@@ -99,23 +99,35 @@ void Angle_Tweak (void)
 
 void Speed_Tweak (void)
 {
-static uint16 count0;
-	count0++;
-	if(count0>=10)
-	{
-		count0=0;
-		//ËÙ¶È»·PID
-		LeftSpeed = encoder_get_count(ENCODER_1) / 44.0 / 0.01 / 30;
-		RightSpeed = encoder_get_count(ENCODER_2) / 44.0 / 0.01 / 30;
-		
-		AveSpeed = (LeftSpeed + RightSpeed) / 2.0;
-		DifSpeed = LeftSpeed - RightSpeed;
+	SpeedPID.Kp = pidnum[0][1][0];
+	SpeedPID.Ki = pidnum[0][1][1];
+	SpeedPID.Kd = pidnum[0][1][2];
 	
-		if (RunFlag)
-		{
-			SpeedPID.Actual = AveSpeed;
-			PID_Update(&SpeedPID);
-			AnglePID.Target = SpeedPID.Out;
-		}
+	LeftSpeed = encoder_get_count(ENCODER_1) / 44.0 / 0.01  / 30.0;
+	encoder_clear_count(ENCODER_1);
+	RightSpeed = encoder_get_count(ENCODER_2) / 44.0 / 0.01 / 30.0;
+	encoder_clear_count(ENCODER_2);
+	
+	aveSpeed = (LeftSpeed + RightSpeed) / 2.0;
+	
+	AveSpeed = 0.3*aveSpeed + (1-0.3)*Last_AveSpeed;  //ÂË²¨
+	Last_AveSpeed = AveSpeed;
+	
+	if (RunFlag)
+	{
+		SpeedPID.Actual = AveSpeed;
+		PID_Update(&SpeedPID);
+		AnglePID.Target = -SpeedPID.Out;
+	}
+}
+
+void Turn_Tweak(void)
+{
+	DifSpeed = LeftSpeed - RightSpeed;
+	if (RunFlag)
+	{
+		TurnPID.Actual = DifSpeed;
+		PID_Update(&TurnPID);
+		DifPWM = TurnPID.Out;
 	}
 }

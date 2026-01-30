@@ -29,7 +29,7 @@ extern int16 AvePWM, DifPWM;
 extern float LeftSpeed, RightSpeed;
 extern float AveSpeed, DifSpeed;
 
-extern PID_t AnglePID, SpeedPID;
+extern PID_t AnglePID, SpeedPID, TurnPID;
 
 void PID_Init(PID_t *p);
 void PID_Update(PID_t *p);

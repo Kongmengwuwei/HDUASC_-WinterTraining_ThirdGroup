@@ -1,5 +1,6 @@
 #include "bluetooth.h"
 #include "pid.h"
+#include "menu.h"
 
 static fifo_struct bluetooth_fifo;
 char BlueSerial_RxPacket[64];
@@ -115,27 +116,27 @@ void BlueTooth_Update (void)
 				
 				if (strcmp(Name, "AngleKp") == 0)
 				{
-					AnglePID.Kp = atof(Value);
+					pidnum[0][0][0] = atof(Value);
 				}
 				else if (strcmp(Name, "AngleKi") == 0)
 				{
-					AnglePID.Ki = atof(Value);
+					pidnum[0][0][1] = atof(Value);
 				}
 				else if (strcmp(Name, "AngleKd") == 0)
 				{
-					AnglePID.Kd = atof(Value);
+					pidnum[0][0][2] = atof(Value);
 				}
 				else if (strcmp(Name, "SpeedKp") == 0)
 				{
-					SpeedPID.Kp = atof(Value);
+					pidnum[0][1][0] = atof(Value);
 				}
 				else if (strcmp(Name, "SpeedKi") == 0)
 				{
-					SpeedPID.Ki = atof(Value);
+					pidnum[0][1][1] = atof(Value);
 				}
 				else if (strcmp(Name, "SpeedKd") == 0)
 				{
-					SpeedPID.Kd = atof(Value);
+					pidnum[0][1][2] = atof(Value);
 				}
 			}
 			else if (strcmp(Tag, "joystick") == 0)				//Ò¡¸Ë
@@ -146,7 +147,7 @@ void BlueTooth_Update (void)
 				int8_t RV = atoi(strtok(NULL, ","));
 				
 				SpeedPID.Target = LV / 25.0;
-				DifPWM = RH / 2;
+				TurnPID.Target = RH / 25.0;
 			}
 			
 			BlueSerial_RxFlag = 0;

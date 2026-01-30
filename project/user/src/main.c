@@ -5,7 +5,6 @@
 #include "pit.h"
 #include "key_handler.h"
 #include "menu.h"
-#include "SoundLight.h"
 #include "flash.h"
 #include "mpu6050.h"
 #include "Motor.h"
@@ -29,21 +28,34 @@ int main(void)
 	
 	interrupt_global_enable(0);
 	
+	SpeedPID.Target=0;																																																																																																									
+	
 	while(1)
 	{
 		key_event_scan();
 		Menu_Update();
 		Mpu6050_Show();
 		
-		BlueTooth_Update();ips200_show_int(0,128,(int8)SpeedPID.Kd,5);
+		ips200_show_float(0,96,LeftSpeed,4,2);
+	  ips200_show_float(0,112,RightSpeed,4,2);
+		
+		BlueTooth_Update();
+		BlueSerial_Printf("[plot,%f,%f]", SpeedPID.Target, AveSpeed);
 	}
 }
 
 void pit_handler(void)
 {
+	static uint8 count0,count1;
+
 	Mpu6050_Read();
-	
 	Angle_Tweak();
-	Speed_Tweak();
+	
+	count1++;
+	if(count1>=10)
+	{
+		count1=0;
+		Speed_Tweak();
+	}
 }
 

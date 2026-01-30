@@ -9,6 +9,7 @@ uint8_t menu_cursor = 0;												//光标位置
 uint8_t min_row = 0,max_row = 0;										//上下行限
 
 float pidnum[5][4][3] = {0};											//PID参数数组
+
 uint8_t carmode = 0,mode_selected = 0;									//发车模式选择
 uint8_t pidmode = 0,pid_selected = 0, pid_edit = 0, pid_row = 0;		//PID选择
 
@@ -150,6 +151,9 @@ void Menu_Update(void)
 		if(k4 == KEY_EVENT_CLICK)
 		{
 			RunFlag = 1;
+			PID_Init(&AnglePID);
+			PID_Init(&SpeedPID);
+			PID_Init(&TurnPID);
 			ips200_show_string(0,96,"RESET");
 		}
 	}
@@ -195,7 +199,7 @@ void Menu_Update(void)
 		if(k1 == KEY_EVENT_CLICK)pidnum[carmode][pidmode][pid_row]+=0.01;
 		if(k1 == KEY_EVENT_REPEAT)pidnum[carmode][pidmode][pid_row]+=0.1;
 		if(k2 == KEY_EVENT_CLICK)pidnum[carmode][pidmode][pid_row]-=0.01;
-		if(k2 == KEY_EVENT_REPEAT)pidnum[carmode][pidmode][pid_row]-=0.1;
+		if(k2 == KEY_EVENT_REPEAT)pidnum[carmode][pidmode][pid_row]-=.1;
 		
 		if(k4 == KEY_EVENT_CLICK)
 		{
