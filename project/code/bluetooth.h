@@ -12,5 +12,6 @@ void BlueSerial_SendArray(uint8_t *Array, uint16_t Length);
 void BlueSerial_SendString(char *String);
 void BlueSerial_SendNumber(uint32_t Number, uint8_t Length);
 void BlueSerial_Printf(char *format, ...);
+void BlueTooth_Update (void);
 
 #endif

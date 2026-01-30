@@ -1,6 +1,8 @@
 #include "menu.h"
 #include "flash.h"
 #include "key_handler.h"
+#include "pid.h"
+#include "Motor.h"
 
 Menu curr_menu = Carmode;												//初始菜单
 uint8_t menu_cursor = 0;												//光标位置
@@ -81,9 +83,9 @@ void Draw_Position (void)
 void Draw_PID (int mode)
 {
 	switch (mode){
-		case 1: Draw_Angle(); break;
-		case 2: Draw_Speed(); break;
-		case 3: Draw_Turn(); break;
+		case 0: Draw_Angle(); break;
+		case 1: Draw_Speed(); break;
+		case 2: Draw_Turn(); break;
 		default: Draw_Position();
 	}
 }
@@ -122,9 +124,9 @@ void Menu_MoveCursor(int8_t dir, uint8_t min, uint8 max)
 
 void PID_Show (void)
 {
-	ips200_show_float(64,16,pidnum[carmode][pidmode][0],3,1);
-	ips200_show_float(64,32,pidnum[carmode][pidmode][1],3,1);
-	ips200_show_float(64,48,pidnum[carmode][pidmode][2],3,1);
+	ips200_show_float(64,16,pidnum[carmode][pidmode][0],2,2);
+	ips200_show_float(64,32,pidnum[carmode][pidmode][1],2,2);
+	ips200_show_float(64,48,pidnum[carmode][pidmode][2],2,2);
 }
 
 /*菜单更新*/
@@ -143,7 +145,12 @@ void Menu_Update(void)
 		if(k3 == KEY_EVENT_CLICK)
 		{
 			mode_selected = 1;
-			carmode = menu_cursor/16;Draw_PID_Select();
+			carmode = (menu_cursor/16) - 1;Draw_PID_Select();
+		}
+		if(k4 == KEY_EVENT_CLICK)
+		{
+			RunFlag = 1;Set_Motor1(30);Set_Motor2(30);
+			ips200_show_string(0,96,"RESET");
 		}
 	}
 	else if(!pid_selected)
@@ -154,7 +161,7 @@ void Menu_Update(void)
 		if(k3 == KEY_EVENT_CLICK)
 		{
 			pid_selected = 1;
-			pidmode = menu_cursor/16;Draw_PID(pidmode);
+			pidmode = (menu_cursor/16) - 1;Draw_PID(pidmode);
 		}
 		if(k4 == KEY_EVENT_CLICK)
 		{
@@ -185,15 +192,15 @@ void Menu_Update(void)
 	{
 		PID_Show();
 		
-		if(k1 == KEY_EVENT_CLICK)pidnum[carmode][pidmode][pid_row]+=0.1;
-		if(k1 == KEY_EVENT_REPEAT)pidnum[carmode][pidmode][pid_row]+=0.5;
-		if(k2 == KEY_EVENT_CLICK)pidnum[carmode][pidmode][pid_row]-=0.1;
-		if(k2 == KEY_EVENT_REPEAT)pidnum[carmode][pidmode][pid_row]-=0.5;
+		if(k1 == KEY_EVENT_CLICK)pidnum[carmode][pidmode][pid_row]+=0.01;
+		if(k1 == KEY_EVENT_REPEAT)pidnum[carmode][pidmode][pid_row]+=0.1;
+		if(k2 == KEY_EVENT_CLICK)pidnum[carmode][pidmode][pid_row]-=0.01;
+		if(k2 == KEY_EVENT_REPEAT)pidnum[carmode][pidmode][pid_row]-=0.1;
 		
 		if(k4 == KEY_EVENT_CLICK)
 		{
-			Flash_Upload();ips200_show_string(176,0,"      ");ips200_show_string(0,80,"SAVED");
-			pid_edit = 0;system_delay_ms(250);ips200_show_string(0,80,"     ");
+			Flash_Upload();ips200_show_string(176,0,"      ");
+			pid_edit = 0;
 		}
 	}
 }

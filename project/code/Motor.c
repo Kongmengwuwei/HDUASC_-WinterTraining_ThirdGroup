@@ -1,4 +1,4 @@
-#include <Motor.h>
+#include "Motor.h"
 
 void Motor_Init()
 {
@@ -14,7 +14,7 @@ void Motor_Init()
 		encoder_quad_init(ENCODER_2, ENCODER_2_A, ENCODER_2_B);             // 初始化编码器模块与引脚 正交解码编码器模式
 }
 
-void Set_Moter1(int16 pwm1)							//设置1号电机（？轮）
+void Set_Motor1(int16 pwm1)							//设置1号电机（？轮）
 {
 	if(pwm1>=0)
 	{
@@ -29,7 +29,7 @@ void Set_Moter1(int16 pwm1)							//设置1号电机（？轮）
 	}
 }
 
-void Set_Moter2(int16 pwm2)							//设置2号电机（？轮）
+void Set_Motor2(int16 pwm2)							//设置2号电机（？轮）
 {
 	if(pwm2>=0)
 	{

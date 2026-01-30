@@ -19,7 +19,7 @@ typedef enum {
 #define ROW_LENGTH		(16)
 
 extern float pidnum[5][4][3];
-extern uint8_t carmode;
+extern uint8_t carmode, mode_selected;
 
 void Menu_Init(void);
 void Menu_Update(void);

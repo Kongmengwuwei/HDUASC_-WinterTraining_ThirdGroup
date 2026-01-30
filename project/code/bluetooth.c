@@ -1,8 +1,11 @@
 #include "bluetooth.h"
+#include "pid.h"
 
-static  fifo_struct     bluetooth_fifo;
+static fifo_struct bluetooth_fifo;
 char BlueSerial_RxPacket[64];
 uint8_t BlueSerial_RxFlag;
+uint8 data_buffer[32];
+uint8 data_len;
 
 void Bluetooth_Init (void)
 {
@@ -63,7 +66,7 @@ void uart_rx_interrupt_handler(void)
 	if(kLPUART_RxDataRegFullFlag & LPUART_GetStatusFlags(LPUART8))
 	{
 			// 接收中断
-      // wireless_module_uart_handler();
+		// wireless_module_uart_handler();
 		uint8_t RxData = uart_read_byte (UART_8);
 		
 		if (RxState == 0)
@@ -91,4 +94,61 @@ void uart_rx_interrupt_handler(void)
 			
 	}			
 	LPUART_ClearStatusFlags(LPUART8, kLPUART_RxOverrunFlag);    // 不允许删除
+}
+
+void BlueTooth_Update (void)
+{
+		if (BlueSerial_RxFlag == 1)								//有接收
+		{
+			char *Tag = strtok(BlueSerial_RxPacket, ",");		//标签
+			
+			if (strcmp(Tag, "key") == 0)						//按键
+			{
+				char *Name = strtok(NULL, ",");
+				char *Action = strtok(NULL, ",");
+				
+			}
+			else if (strcmp(Tag, "slider") == 0)				//滑块
+			{
+				char *Name = strtok(NULL, ",");
+				char *Value = strtok(NULL, ",");
+				
+				if (strcmp(Name, "AngleKp") == 0)
+				{
+					AnglePID.Kp = atof(Value);
+				}
+				else if (strcmp(Name, "AngleKi") == 0)
+				{
+					AnglePID.Ki = atof(Value);
+				}
+				else if (strcmp(Name, "AngleKd") == 0)
+				{
+					AnglePID.Kd = atof(Value);
+				}
+				else if (strcmp(Name, "SpeedKp") == 0)
+				{
+					SpeedPID.Kp = atof(Value);
+				}
+				else if (strcmp(Name, "SpeedKi") == 0)
+				{
+					SpeedPID.Ki = atof(Value);
+				}
+				else if (strcmp(Name, "SpeedKd") == 0)
+				{
+					SpeedPID.Kd = atof(Value);
+				}
+			}
+			else if (strcmp(Tag, "joystick") == 0)				//摇杆
+			{
+				int8_t LH = atoi(strtok(NULL, ","));
+				int8_t LV = atoi(strtok(NULL, ","));
+				int8_t RH = atoi(strtok(NULL, ","));
+				int8_t RV = atoi(strtok(NULL, ","));
+				
+				SpeedPID.Target = LV / 25.0;
+				DifPWM = RH / 2;
+			}
+			
+			BlueSerial_RxFlag = 0;
+		}
 }

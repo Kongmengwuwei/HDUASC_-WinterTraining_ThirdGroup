@@ -20,7 +20,7 @@
 #define ENCODER_2_B                 (QTIMER2_ENCODER1_CH2_C4)
 
 void Motor_Init();
-void Set_Moter1(int16 pwm1);
-void Set_Moter2(int16 pwm2);
+void Set_Motor1(int16 pwm1);
+void Set_Motor2(int16 pwm2);
 
 #endif

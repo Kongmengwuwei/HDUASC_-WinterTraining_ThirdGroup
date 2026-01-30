@@ -1,4 +1,32 @@
 #include "pid.h"
+#include "mpu6050.h"
+#include "Motor.h"
+#include "menu.h"
+
+uint8 RunFlag = 1;
+int16 LeftPWM = 0, RightPWM = 0;
+int16 AvePWM = 0, DifPWM = 0;
+
+PID_t AnglePID = {
+	.Kp = 0,
+	.Ki = 0,
+	.Kd = 0,
+	
+	.OutMax = 100,
+	.OutMin = -100,
+};
+
+PID_t SpeedPID = {
+	.Kp = 0,
+	.Ki = 0,
+	.Kd = 0,
+	
+	.OutMax = 20,
+	.OutMin = -20,
+	
+	.ErrorIntMax = 150,
+	.ErrorIntMin = -150,
+};
 
 void PID_Init(PID_t *p)
 {
@@ -12,7 +40,6 @@ void PID_Init(PID_t *p)
 
 void PID_Update(PID_t *p)
 {
-	/*获取本次误差和上次误差*/
 	p->Error1 = p->Error0;					//获取上次误差
 	p->Error0 = p->Target - p->Actual;		//获取本次误差，目标值减实际值，即为误差值
 	
@@ -28,14 +55,42 @@ void PID_Update(PID_t *p)
 	{
 		p->ErrorInt = 0;			//误差积分直接归0
 	}
-	
-	/*PID计算*/
 	/*使用位置式PID公式，计算得到输出值*/
 	p->Out = p->Kp * p->Error0
 		   + p->Ki * p->ErrorInt
 		   + p->Kd * (p->Error0 - p->Error1);
-	
 	/*输出限幅*/
 	if (p->Out > p->OutMax) {p->Out = p->OutMax;}	//限制输出值最大为结构体指定的OutMax
 	if (p->Out < p->OutMin) {p->Out = p->OutMin;}	//限制输出值最小为结构体指定的OutMin
+}
+
+void Angle_Tweak (void)
+{
+	AnglePID.Kp = pidnum[0][0][0];
+	AnglePID.Ki = pidnum[0][0][1];
+	AnglePID.Kd = pidnum[0][0][2];
+	
+	if (pitch > 60 || pitch < -60)
+	{
+		RunFlag = 0;
+	}
+	if (RunFlag)
+	{
+		AnglePID.Actual = pitch-2;
+		PID_Update(&AnglePID);
+		AvePWM = -AnglePID.Out;
+		
+		LeftPWM = AvePWM + DifPWM / 2;
+		RightPWM = AvePWM - DifPWM / 2;
+		
+		if (LeftPWM > 100) {LeftPWM = 100;} else if (LeftPWM < -100) {LeftPWM = -100;}
+		if (RightPWM > 100) {RightPWM = 100;} else if (RightPWM < -100) {RightPWM = -100;}
+		
+		Set_Motor1(LeftPWM);
+		Set_Motor2(RightPWM);
+	}else
+	{
+		Set_Motor1(0);
+		Set_Motor2(0);
+	}
 }
