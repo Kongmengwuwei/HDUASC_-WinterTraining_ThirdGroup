@@ -27,17 +27,19 @@ int main(void)
 	Pit_Init();
 	
 	interrupt_global_enable(0);
-	
-	SpeedPID.Target=0;																																																																																																									
+
+	Set_Motor1(50);	
+	Set_Motor2(50);
 	
 	while(1)
 	{
 		key_event_scan();
 		Menu_Update();
 		Mpu6050_Show();
-		
+	
 		ips200_show_float(0,96,LeftSpeed,4,2);
 	  ips200_show_float(0,112,RightSpeed,4,2);
+		ips200_show_float(80,112,AnglePID.Target,4,2);
 		
 		BlueTooth_Update();
 		BlueSerial_Printf("[plot,%f,%f]", SpeedPID.Target, AveSpeed);
@@ -48,13 +50,12 @@ void pit_handler(void)
 {
 	static uint8 count0,count1;
 
-	Mpu6050_Read();
-	Angle_Tweak();
-	
+//	Mpu6050_Read();
+//	Angle_Tweak();
+//		
 	count1++;
 	if(count1>=10)
 	{
-		count1=0;
 		Speed_Tweak();
 	}
 }

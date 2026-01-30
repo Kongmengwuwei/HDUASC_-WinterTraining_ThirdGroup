@@ -6,6 +6,7 @@
 uint8 RunFlag = 1;
 int16 LeftPWM = 0, RightPWM = 0;
 int16 AvePWM = 0, DifPWM = 0;
+int32 LeftEncoder=0, Last_LeftEncoder=0, RightEncoder=0,Last_RightEncoder=0;
 float LeftSpeed = 0, RightSpeed = 0;
 float aveSpeed = 0,  AveSpeed = 0, Last_AveSpeed = 0,DifSpeed = 0;
 
@@ -30,6 +31,12 @@ PID_t TurnPID = {
 	.OutMin = -50,
 };
 
+void I_limit(PID_t *p,int max)
+{
+	if(p->ErrorInt>max)  p->ErrorInt=max;
+	if(p->ErrorInt<-max) p->ErrorInt=-max;
+}
+
 void PID_Init(PID_t *p)
 {
 	p->Target = 0;
@@ -43,12 +50,8 @@ void PID_Init(PID_t *p)
 void PID_Update(PID_t *p)
 {
 	p->Error1 = p->Error0;					//获取上次误差
-	p->Error0 = p->Target - p->Actual;		//获取本次误差，目标值减实际值，即为误差值
+	p->Error0 = p->Target - p->Actual;		//获取本次误差
 	
-	/*外环误差积分（累加）*/
-	/*如果Ki不为0，才进行误差积分，这样做的目的是便于调试*/
-	/*因为在调试时，我们可能先把Ki设置为0，这时积分项无作用，误差消除不了，误差积分会积累到很大的值*/
-	/*后续一旦Ki不为0，那么因为误差积分已经积累到很大的值了，这就导致积分项疯狂输出，不利于调试*/
 	if (p->Ki != 0)					//如果Ki不为0
 	{
 		p->ErrorInt += p->Error0;	//进行误差积分
@@ -103,21 +106,27 @@ void Speed_Tweak (void)
 	SpeedPID.Ki = pidnum[0][1][1];
 	SpeedPID.Kd = pidnum[0][1][2];
 	
-	LeftSpeed = encoder_get_count(ENCODER_1) / 44.0 / 0.01  / 30.0;
-	encoder_clear_count(ENCODER_1);
-	RightSpeed = encoder_get_count(ENCODER_2) / 44.0 / 0.01 / 30.0;
-	encoder_clear_count(ENCODER_2);
+//	LeftSpeed = encoder_get_count(ENCODER_1) / 44.0 / 0.01  / 30.0;	
+//	encoder_clear_count(ENCODER_1);
+//	RightSpeed = encoder_get_count(ENCODER_2) / 44.0 / 0.01 / 30.0;
+//	encoder_clear_count(ENCODER_2);
+	LeftEncoder=encoder_get_count(ENCODER_1) ;
+	LeftSpeed=(LeftEncoder-Last_LeftEncoder);	
+	Last_LeftEncoder=LeftEncoder;
+	RightEncoder=encoder_get_count(ENCODER_2) ;
+	RightSpeed=(RightEncoder-Last_RightEncoder);	
+	Last_RightEncoder=RightEncoder;
 	
-	aveSpeed = (LeftSpeed + RightSpeed) / 2.0;
+	AveSpeed = (LeftSpeed + RightSpeed) / 2.0;
 	
-	AveSpeed = 0.3*aveSpeed + (1-0.3)*Last_AveSpeed;  //滤波
-	Last_AveSpeed = AveSpeed;
+//	AveSpeed = 0.5*aveSpeed + (1-0.5)*Last_AveSpeed;  //滤波																																																														
+//	Last_AveSpeed = AveSpeed;
 	
 	if (RunFlag)
 	{
 		SpeedPID.Actual = AveSpeed;
 		PID_Update(&SpeedPID);
-		AnglePID.Target = -SpeedPID.Out;
+		AnglePID.Target = SpeedPID.Out;
 	}
 }
 

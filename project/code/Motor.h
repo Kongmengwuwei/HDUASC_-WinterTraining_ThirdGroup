@@ -16,7 +16,7 @@
 #define ENCODER_1_B                 (QTIMER2_ENCODER2_CH2_C25)
 
 #define ENCODER_2                   (QTIMER2_ENCODER1)
-#define ENCODER_2_A                 (QTIMER2_ENCODER1_CH1_C39)
+#define ENCODER_2_A                 (QTIMER2_ENCODER1_CH1_C3)
 #define ENCODER_2_B                 (QTIMER2_ENCODER1_CH2_C4)
 
 void Motor_Init();
