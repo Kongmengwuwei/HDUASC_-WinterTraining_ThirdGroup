@@ -34,5 +34,6 @@ extern PID_t AnglePID, SpeedPID;
 void PID_Init(PID_t *p);
 void PID_Update(PID_t *p);
 void Angle_Tweak (void);
+void Speed_Tweak (void);
 
 #endif

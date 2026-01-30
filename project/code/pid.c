@@ -6,6 +6,8 @@
 uint8 RunFlag = 1;
 int16 LeftPWM = 0, RightPWM = 0;
 int16 AvePWM = 0, DifPWM = 0;
+float LeftSpeed = 0, RightSpeed = 0;
+float AveSpeed = 0, DifSpeed = 0;
 
 PID_t AnglePID = {
 	.Kp = 0,
@@ -92,5 +94,28 @@ void Angle_Tweak (void)
 	{
 		Set_Motor1(0);
 		Set_Motor2(0);
+	}
+}
+
+void Speed_Tweak (void)
+{
+static uint16 count0;
+	count0++;
+	if(count0>=10)
+	{
+		count0=0;
+		//ËÙ¶È»·PID
+		LeftSpeed = encoder_get_count(ENCODER_1) / 44.0 / 0.01 / 30;
+		RightSpeed = encoder_get_count(ENCODER_2) / 44.0 / 0.01 / 30;
+		
+		AveSpeed = (LeftSpeed + RightSpeed) / 2.0;
+		DifSpeed = LeftSpeed - RightSpeed;
+	
+		if (RunFlag)
+		{
+			SpeedPID.Actual = AveSpeed;
+			PID_Update(&SpeedPID);
+			AnglePID.Target = SpeedPID.Out;
+		}
 	}
 }

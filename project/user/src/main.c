@@ -42,6 +42,8 @@ int main(void)
 void pit_handler(void)
 {
 	Mpu6050_Read();
+	
 	Angle_Tweak();
+	Speed_Tweak();
 }
 

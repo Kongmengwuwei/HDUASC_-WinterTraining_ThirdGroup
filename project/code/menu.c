@@ -149,7 +149,7 @@ void Menu_Update(void)
 		}
 		if(k4 == KEY_EVENT_CLICK)
 		{
-			RunFlag = 1;Set_Motor1(30);Set_Motor2(30);
+			RunFlag = 1;
 			ips200_show_string(0,96,"RESET");
 		}
 	}
