@@ -11,13 +11,13 @@
 #define MOTOR2_2                 (D1)
 #define MOTOR2_PWM               (PWM2_MODULE2_CHB_C11)
 
-#define ENCODER_1                   (QTIMER2_ENCODER2)
-#define ENCODER_1_A                 (QTIMER2_ENCODER2_CH1_C5)
-#define ENCODER_1_B                 (QTIMER2_ENCODER2_CH2_C25)
+#define ENCODER_1                   (QTIMER1_ENCODER1)
+#define ENCODER_1_A                 (QTIMER1_ENCODER1_CH1_C0)
+#define ENCODER_1_B                 (QTIMER1_ENCODER1_CH2_C1)
 
-#define ENCODER_2                   (QTIMER2_ENCODER1)
-#define ENCODER_2_A                 (QTIMER2_ENCODER1_CH1_C3)
-#define ENCODER_2_B                 (QTIMER2_ENCODER1_CH2_C4)
+#define ENCODER_2                   (QTIMER1_ENCODER2)
+#define ENCODER_2_A                 (QTIMER1_ENCODER2_CH1_C2)
+#define ENCODER_2_B                 (QTIMER1_ENCODER2_CH2_C24)
 
 void Motor_Init();
 void Set_Motor1(int16 pwm1);

@@ -173,7 +173,14 @@ void Menu_Update(void)
 			}
 			else if(menu_cursor == 32)
 			{
-				if(k3 == KEY_EVENT_CLICK){RunFlag = 1;ips200_show_string(64,32,"GO    ");ips200_show_string(64,32,"  Over");}
+				if(k3 == KEY_EVENT_CLICK){
+				RunFlag = 1;
+				PID_Init(&AnglePID);
+				PID_Init(&SpeedPID);
+				PID_Init(&TurnPID);
+				ips200_show_string(64,32,"GO    ");
+				ips200_show_string(64,32,"  Over");
+				}
 				if(k4 == KEY_EVENT_CLICK){ips200_show_string(176,0,"      ");flag = 0;}
 			}
 		}
