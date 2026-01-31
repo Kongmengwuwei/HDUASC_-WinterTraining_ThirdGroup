@@ -10,7 +10,7 @@ uint8 data_len;
 
 void Bluetooth_Init (void)
 {
-	  fifo_init(&bluetooth_fifo, FIFO_DATA_8BIT, BlueSerial_RxPacket, 64);
+	fifo_init(&bluetooth_fifo, FIFO_DATA_8BIT, BlueSerial_RxPacket, 64);
     gpio_init(BLUETOOTH_CH9141_RTS_PIN, GPI, 1, GPI_PULL_UP);                   // 初始化流控引脚
     uart_init(UART_8, 9600, UART8_TX_D16, UART8_RX_D17);
     uart_rx_interrupt(UART_8, 1);
@@ -92,8 +92,8 @@ void uart_rx_interrupt_handler(void)
 				pRxPacket ++;
 			}
 		}
-			
-	}			
+	
+	}
 	LPUART_ClearStatusFlags(LPUART8, kLPUART_RxOverrunFlag);    // 不允许删除
 }
 
@@ -116,27 +116,27 @@ void BlueTooth_Update (void)
 				
 				if (strcmp(Name, "AngleKp") == 0)
 				{
-					pidnum[0][0][0] = atof(Value);
+					parameter[1][0] = atof(Value);
 				}
 				else if (strcmp(Name, "AngleKi") == 0)
 				{
-					pidnum[0][0][1] = atof(Value);
+					parameter[1][1] = atof(Value);
 				}
 				else if (strcmp(Name, "AngleKd") == 0)
 				{
-					pidnum[0][0][2] = atof(Value);
+					parameter[1][2] = atof(Value);
 				}
 				else if (strcmp(Name, "SpeedKp") == 0)
 				{
-					pidnum[0][1][0] = atof(Value);
+					parameter[2][0] = atof(Value);
 				}
 				else if (strcmp(Name, "SpeedKi") == 0)
 				{
-					pidnum[0][1][1] = atof(Value);
+					parameter[2][1] = atof(Value);
 				}
 				else if (strcmp(Name, "SpeedKd") == 0)
 				{
-					pidnum[0][1][2] = atof(Value);
+					parameter[2][2] = atof(Value);
 				}
 			}
 			else if (strcmp(Tag, "joystick") == 0)				//摇杆

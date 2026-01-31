@@ -4,13 +4,11 @@
 #include "pid.h"
 #include "Motor.h"
 
-Menu curr_menu = Carmode;												//初始菜单
+Menu curr_menu = Main;													//初始菜单
 uint8_t menu_cursor = 0;												//光标位置
 uint8_t min_row = 0,max_row = 0;										//上下行限
+float parameter[5][3] = {0};											//参数数组
 
-float pidnum[5][4][3] = {0};											//PID参数数组
-
-uint8_t carmode = 0,mode_selected = 0;									//发车模式选择
 uint8_t pidmode = 0,pid_selected = 0, pid_edit = 0, pid_row = 0;		//PID选择
 
 void Menu_Clear (void)
@@ -18,16 +16,22 @@ void Menu_Clear (void)
 	for(int i = 0;i < 6;i++) ips200_show_string(0,16*i,"                             ");
 }
 
-void Draw_Carmode (void)
+void Draw_Main (void)
 {
 	Menu_Clear();menu_cursor = 16;
-	ips200_show_string(0,0,"Car Mode Select");
-	ips200_show_string(0,16,"==>Mode 1");
-	ips200_show_string(24,32,"Mode 2");
-	ips200_show_string(24,48,"Mode 3");
-	ips200_show_string(24,64,"Mode 4");
-	ips200_show_string(24,80,"Mode 5");
-	min_row = 16;max_row = 80;
+	ips200_show_string(0,0,"MAIN MENU");
+	ips200_show_string(0,16,"==>PID");
+	ips200_show_string(24,32,"CarCheck");
+	min_row = 16;max_row = 32;
+}
+
+void Draw_CarCheck (void)
+{
+	Menu_Clear();menu_cursor = 16;
+	ips200_show_string(0,0,"Car Check");
+	ips200_show_string(0,16,"==>Mode = ");
+	ips200_show_string(24,32,"Set");
+	min_row = 16;max_row = 32;
 }
 
 void Draw_PID_Select (void)
@@ -84,9 +88,9 @@ void Draw_Position (void)
 void Draw_PID (int mode)
 {
 	switch (mode){
-		case 0: Draw_Angle(); break;
-		case 1: Draw_Speed(); break;
-		case 2: Draw_Turn(); break;
+		case 1: Draw_Angle(); break;
+		case 2: Draw_Speed(); break;
+		case 3: Draw_Turn(); break;
 		default: Draw_Position();
 	}
 }
@@ -99,7 +103,7 @@ void Menu_Init(void)													//
 	ips200_set_color(RGB565_WHITE, RGB565_BLACK);
 	ips200_init(IPS200_TYPE);
 	
-	Draw_Carmode();
+	Draw_Main();
 	Flash_Download();
 }
 
@@ -123,13 +127,6 @@ void Menu_MoveCursor(int8_t dir, uint8_t min, uint8 max)
 	ips200_show_string(0, menu_cursor, "==>");					//新光标
 }
 
-void PID_Show (void)
-{
-	ips200_show_float(64,16,pidnum[carmode][pidmode][0],2,2);
-	ips200_show_float(64,32,pidnum[carmode][pidmode][1],2,2);
-	ips200_show_float(64,48,pidnum[carmode][pidmode][2],2,2);
-}
-
 /*菜单更新*/
 void Menu_Update(void)
 {
@@ -138,73 +135,70 @@ void Menu_Update(void)
 	key_event_enum k3 = key_event_get(KEY_3);
 	key_event_enum k4 = key_event_get(KEY_4);
 	
-	if(!mode_selected)
+	if(curr_menu == Main)
 	{
 		if(k1 == KEY_EVENT_CLICK)Menu_MoveCursor(-1,min_row,max_row);
 		if(k2 == KEY_EVENT_CLICK)Menu_MoveCursor(1,min_row,max_row);
-		
 		if(k3 == KEY_EVENT_CLICK)
 		{
-			mode_selected = 1;
-			carmode = (menu_cursor/16) - 1;Draw_PID_Select();
-		}
-		if(k4 == KEY_EVENT_CLICK)
-		{
-			RunFlag = 1;
-			PID_Init(&AnglePID);
-			PID_Init(&SpeedPID);
-			PID_Init(&TurnPID);
-			ips200_show_string(0,96,"RESET");
+			if(menu_cursor == 16){curr_menu = PID;Draw_PID_Select();}
+			else if(menu_cursor == 32){curr_menu = CarCheck;Draw_CarCheck();}
 		}
 	}
-	else if(!pid_selected)
+	else if(curr_menu == PID)
 	{
 		if(k1 == KEY_EVENT_CLICK)Menu_MoveCursor(-1,min_row,max_row);
 		if(k2 == KEY_EVENT_CLICK)Menu_MoveCursor(1,min_row,max_row);
-		
-		if(k3 == KEY_EVENT_CLICK)
-		{
-			pid_selected = 1;
-			pidmode = (menu_cursor/16) - 1;Draw_PID(pidmode);
-		}
-		if(k4 == KEY_EVENT_CLICK)
-		{
-			mode_selected = 0;
-			Draw_Carmode();
-		}
+		if(k3 == KEY_EVENT_CLICK){curr_menu = Edit;pidmode = menu_cursor/16;Draw_PID(pidmode);}
+		if(k4 == KEY_EVENT_CLICK){curr_menu = Main;Draw_Main();}
 	}
-	else if(!pid_edit)
+	else if(curr_menu == CarCheck)
 	{
-		PID_Show();
-
-		if(k1 == KEY_EVENT_CLICK)Menu_MoveCursor(-1,min_row,max_row);
-		if(k2 == KEY_EVENT_CLICK)Menu_MoveCursor(1,min_row,max_row);
-		
-		if(k3 == KEY_EVENT_CLICK)
+		static uint8 flag = 0,carmode = 1;
+		ips200_show_int(80,16,carmode,1);
+		if(!flag)
 		{
-			pid_edit = 1;
-			pid_row = (menu_cursor/16) - 1;
-			ips200_show_string(176,0,"Locked");
+			if(k1 == KEY_EVENT_CLICK)Menu_MoveCursor(-1,min_row,max_row);
+			if(k2 == KEY_EVENT_CLICK)Menu_MoveCursor(1,min_row,max_row);
+			if(k3 == KEY_EVENT_CLICK){ips200_show_string(176,0,"Locked");flag = 1;}
+			if(k4 == KEY_EVENT_CLICK){curr_menu = Main;Draw_Main();}
 		}
-		
-		if(k4 == KEY_EVENT_CLICK)
+		else
 		{
-			pid_selected = 0;Draw_PID_Select();
+			if(menu_cursor == 16)
+			{
+				if(k1 == KEY_EVENT_CLICK){if(carmode < 5) carmode++; else carmode = 1;}
+				if(k2 == KEY_EVENT_CLICK){if(carmode > 1) carmode--; else carmode = 5;}
+				if(k4 == KEY_EVENT_CLICK){Flash_Upload();ips200_show_string(176,0,"      ");flag = 0;}
+			}
+			else if(menu_cursor == 32)
+			{
+				if(k3 == KEY_EVENT_CLICK){RunFlag = 1;ips200_show_string(64,32,"GO    ");ips200_show_string(64,32,"  Over");}
+				if(k4 == KEY_EVENT_CLICK){ips200_show_string(176,0,"      ");flag = 0;}
+			}
 		}
+		parameter[Carmode][0] = carmode;
 	}
-	else
+	else if(curr_menu == Edit)
 	{
-		PID_Show();
-		
-		if(k1 == KEY_EVENT_CLICK)pidnum[carmode][pidmode][pid_row]+=0.01;
-		if(k1 == KEY_EVENT_REPEAT)pidnum[carmode][pidmode][pid_row]+=0.1;
-		if(k2 == KEY_EVENT_CLICK)pidnum[carmode][pidmode][pid_row]-=0.01;
-		if(k2 == KEY_EVENT_REPEAT)pidnum[carmode][pidmode][pid_row]-=.1;
-		
-		if(k4 == KEY_EVENT_CLICK)
+		static uint8 flag = 0;
+		ips200_show_float(64,16,parameter[pidmode][0],2,2);
+		ips200_show_float(64,32,parameter[pidmode][1],2,2);
+		ips200_show_float(64,48,parameter[pidmode][2],2,2);
+		if(!flag)
 		{
-			Flash_Upload();ips200_show_string(176,0,"      ");
-			pid_edit = 0;
+			if(k1 == KEY_EVENT_CLICK)Menu_MoveCursor(-1,min_row,max_row);
+			if(k2 == KEY_EVENT_CLICK)Menu_MoveCursor(1,min_row,max_row);
+			if(k3 == KEY_EVENT_CLICK){pid_row = (menu_cursor/16) - 1;ips200_show_string(176,0,"Locked");flag = 1;}
+			if(k4 == KEY_EVENT_CLICK){curr_menu = PID;Draw_PID_Select();}
+		}
+		else
+		{
+			if(k1 == KEY_EVENT_CLICK)parameter[pidmode][pid_row]+=0.01;
+			if(k1 == KEY_EVENT_REPEAT)parameter[pidmode][pid_row]+=0.1;
+			if(k2 == KEY_EVENT_CLICK)parameter[pidmode][pid_row]-=0.01;
+			if(k2 == KEY_EVENT_REPEAT)parameter[pidmode][pid_row]-=0.1;
+			if(k4 == KEY_EVENT_CLICK){Flash_Upload();ips200_show_string(176,0,"      ");flag = 0;}
 		}
 	}
 }

@@ -4,19 +4,14 @@
 #include "zf_common_headfile.h"
 
 #define MPU_ADDR			0x68
-#define WARMUP_COUNT		500
-#define CALIBRATE_COUNT		100
-#define STABLE_THRESHOLD	0.5f
+#define SAMPLE_FREQ			1000.0f							// 采样频率(Hz)
+#define TWO_KP				20.0f							//比例增益
+#define TWO_KI				0.3f							//积分增益
 
-extern uint8 mpuflag;
 extern float ax,ay,az,gx,gy,gz;
 extern float pitch, roll, yaw;
 
-uint8 MPU_Write_Len(uint8 addr, uint8 reg, uint8 len, uint8 *buf);
-uint8 MPU_Read_Len(uint8 addr, uint8 reg, uint8 len, uint8 *buf);
-
 void Mpu6050_Init(void);
-void Mpu6050_Calibrate(void);
 void Mpu6050_Read(void);
 void Mpu6050_Show(void);
 

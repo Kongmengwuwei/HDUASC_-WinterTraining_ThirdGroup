@@ -7,19 +7,23 @@
 #define IPS200_TYPE		(IPS200_TYPE_SPI)
 
 typedef enum {
-	Carmode,
+	Main,
+	CarCheck,
 	PID,
+	Edit
+} Menu;
+
+typedef enum {
+	Carmode,
 	Angle,
 	Speed,
 	Turn,
 	Position
-} Menu;
-
+} Param;
 
 #define ROW_LENGTH		(16)
 
-extern float pidnum[5][4][3];
-extern uint8_t carmode, mode_selected;
+extern float parameter[5][3];
 
 void Menu_Init(void);
 void Menu_Update(void);

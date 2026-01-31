@@ -11,6 +11,9 @@
 #include "pid.h"
 #include "bluetooth.h"
 
+static int16 raw_count1 = 0;
+static int16 raw_count2 = 0;
+
 int main(void)
 {
 	clock_init(SYSTEM_CLOCK_600M);	// ²»¿ÉÉ¾³ý
@@ -27,36 +30,44 @@ int main(void)
 	Pit_Init();
 	
 	interrupt_global_enable(0);
-
-	Set_Motor1(50);	
-	Set_Motor2(50);
 	
+	Set_Motor1(100);
+	Set_Motor2(100);
+
 	while(1)
 	{
 		key_event_scan();
 		Menu_Update();
 		Mpu6050_Show();
-	
+		
+		ips200_show_int(0, 80, raw_count1, 5);
+		ips200_show_int(80, 80, raw_count2, 5);
 		ips200_show_float(0,96,LeftSpeed,4,2);
-	  ips200_show_float(0,112,RightSpeed,4,2);
-		ips200_show_float(80,112,AnglePID.Target,4,2);
+		ips200_show_float(0,112,RightSpeed,4,2);
+//		ips200_show_float(80,112,AnglePID.Target,4,2);
 		
 		BlueTooth_Update();
-		BlueSerial_Printf("[plot,%f,%f]", SpeedPID.Target, AveSpeed);
+//		BlueSerial_Printf("[plot,%f,%f]", SpeedPID.Target, AveSpeed);
 	}
 }
 
 void pit_handler(void)
 {
-	static uint8 count0,count1;
-
-//	Mpu6050_Read();
+	Mpu6050_Read();
+	static uint16 count0;
+		count0++;
 //	Angle_Tweak();
-//		
-	count1++;
-	if(count1>=10)
+	if(count0>=10)
 	{
-		Speed_Tweak();
+		count0=0;
+		raw_count1 = encoder_get_count(ENCODER_1);
+		raw_count2 = encoder_get_count(ENCODER_2);
+		LeftSpeed = encoder_get_count(ENCODER_1) / 11.0 / 0.01 / 30;
+		encoder_clear_count(ENCODER_1);
+		RightSpeed = encoder_get_count(ENCODER_2) / 11.0 / 0.01 / 30;
+		encoder_clear_count(ENCODER_2);
+	
+//	Speed_Tweak();
 	}
 }
 
