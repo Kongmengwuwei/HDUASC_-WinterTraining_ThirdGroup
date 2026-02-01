@@ -15,15 +15,15 @@ PID_t AnglePID = {
 	.OutMin = -100,
 	
 	.OutOffset=0,
-	.ErrorIntMax=100,
-	.ErrorIntMin=-100,
+	.ErrorIntMax=1000,
+	.ErrorIntMin=-1000,
 };
 PID_t SpeedPID = {
-	.OutMax = 10,
-	.OutMin = -10,
+	.OutMax = 100,
+	.OutMin = -100,
 	
-	.ErrorIntMax = 100,
-	.ErrorIntMin = -100,
+	.ErrorIntMax = 400,
+	.ErrorIntMin = 400,
 };
 PID_t TurnPID = {
 	.OutMax = 0,
@@ -90,28 +90,9 @@ void Angle_Tweak (void)		//角度环PID（结果输出给电机）
 	{
 		RunFlag = 0;
 	}
+	AnglePID.Actual = pitch;
+	PID_Update(&AnglePID);
 	
-	if (RunFlag)
-	{
-		AnglePID.Actual = pitch;
-		PID_Update(&AnglePID);
-		AvePWM = -AnglePID.Out;
-		
-		LeftPWM = AvePWM + DifPWM / 2;
-		RightPWM = AvePWM - DifPWM / 2;
-		
-		if (LeftPWM > 100) {LeftPWM = 100;}
-		else if (LeftPWM < -100) {LeftPWM = -100;}
-		if (RightPWM > 100) {RightPWM = 100;} 
-		else if (RightPWM < -100) {RightPWM = -100;}
-		
-		Set_Motor1(LeftPWM);
-		Set_Motor2(RightPWM);
-	}else
-	{
-		Set_Motor1(0);
-		Set_Motor2(0);
-	}
 }
 
 void Speed_Tweak (void)		//速度环PID（结果输出给角度环）
@@ -120,12 +101,9 @@ void Speed_Tweak (void)		//速度环PID（结果输出给角度环）
 	SpeedPID.Ki = parameter[2][1];
 	SpeedPID.Kd = parameter[2][2];
 	
-	if (RunFlag)
-	{
-		SpeedPID.Actual = AveSpeed;
-		PID_Update(&SpeedPID);
-		AnglePID.Target = SpeedPID.Out;
-	}
+	SpeedPID.Actual = AveSpeed;
+	PID_Update(&SpeedPID);
+	
 }
 
 void Turn_Tweak(void)		//转向环PID（结果输出给角度环）
@@ -134,12 +112,9 @@ void Turn_Tweak(void)		//转向环PID（结果输出给角度环）
 	TurnPID.Ki = parameter[3][1];
 	TurnPID.Kd = parameter[3][2];
 	
-	if (RunFlag)
-	{
-		TurnPID.Actual = DifSpeed;
-		PID_Update(&TurnPID);
-		DifPWM = TurnPID.Out;
-	}
+	TurnPID.Actual = DifSpeed;
+	PID_Update(&TurnPID);
+	
 }
 
 void Trace_Tweak(void)		//转向环PID（结果输出给角度环）
@@ -148,10 +123,7 @@ void Trace_Tweak(void)		//转向环PID（结果输出给角度环）
 	TurnPID.Ki = parameter[4][1];
 	TurnPID.Kd = parameter[4][2];
 	
-	if (RunFlag)
-	{
-		TracePID.Actual = Sensor_Check();
-		PID_Update(&TracePID);
-		TurnPID.Target = TracePID.Out;
-	}
+	TracePID.Actual = Sensor_Check();
+	PID_Update(&TracePID);
+	TurnPID.Target = TracePID.Out;
 }

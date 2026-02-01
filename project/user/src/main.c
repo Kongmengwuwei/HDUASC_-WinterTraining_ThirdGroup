@@ -25,7 +25,7 @@ int main(void)
 	Bluetooth_Init();
 	Menu_Init();
 	mpu6050_init();	
-	Kalman_Init(&KF, 0.0005f, 0.003f, 0.1f);
+	Kalman_Init(&KF, 0.0001f, 0.003f, 0.03f);
 	Motor_Init();
 	Pit_Init();
 	interrupt_global_enable(0);
@@ -50,33 +50,26 @@ int main(void)
 	}
 }
 
-void pit_handler(void)  //1ms定时中断
+void pit_handler(void)  //10ms定时中断
 {
-	static uint16 count0,count1;
-	count0++;
-	count1++;
+//	static uint16 count0;
+//	count0++;
+//	/*10ms*/
+//	if(count0>=10)
+//	{	
+//		count0=0;
 	
-	/*2ms*/
-	if(count1>=2)
-	{
-	count1=0;		
-	Calculate_Attitude();	//姿态解算
-	Angle_Tweak();		 		//角度环PID	
-	}
-	
-	/*10ms*/
-	if(count0>=10)
-	{
-		count0=0;
+		Calculate_Attitude();	//姿态解算
+		Angle_Tweak();		 		//角度环PID			
 	
 		//读取编码器（动态滤波控制波动）		
 		float speed_filter = 1.0; 
-    if(fabs(pitch) < 5 ) { speed_filter = 0.2; } 	 // 静态强滤波
+    if(fabs(pitch) < 5 ) { speed_filter = 0.3; } 	 // 静态强滤波
     else { speed_filter = 0.5;}  									 // 动态弱滤波
 		LeftSpeed = speed_filter * (encoder_get_count(ENCODER_1) / 44.0 / 0.01 / 30.0 ) + (1-speed_filter) * Last_LeftSpeed;
 		RightSpeed = speed_filter * (encoder_get_count(ENCODER_2) / 44.0 / 0.01 / 30.0 ) + (1-speed_filter)* Last_RightSpeed;
-		if(Last_LeftSpeed-LeftSpeed>=0.3  || Last_LeftSpeed-LeftSpeed<=-0.3)LeftSpeed=Last_LeftSpeed;
-		if(Last_RightSpeed-RightSpeed>=0.3  || Last_RightSpeed-RightSpeed<=-0.3)RightSpeed=Last_RightSpeed;
+		if(Last_LeftSpeed-LeftSpeed>=0.5  || Last_LeftSpeed-LeftSpeed<=-0.5)LeftSpeed=Last_LeftSpeed;
+		if(Last_RightSpeed-RightSpeed>=0.5  || Last_RightSpeed-RightSpeed<=-0.5)RightSpeed=Last_RightSpeed;
 		encoder_clear_count(ENCODER_1);
 		encoder_clear_count(ENCODER_2);	
 		
@@ -88,5 +81,25 @@ void pit_handler(void)  //1ms定时中断
 			
 	  Speed_Tweak();	//速度环PID
 		Turn_Tweak();		//转向环PID
-	}
+		
+		AvePWM = - AnglePID.Out -	SpeedPID.Out;
+		DifPWM = TurnPID.Out;	
+		
+		LeftPWM = AvePWM + DifPWM / 2;
+		RightPWM = AvePWM - DifPWM / 2;	
+		if (LeftPWM > 100) {LeftPWM = 100;}
+		else if (LeftPWM < -100) {LeftPWM = -100;}
+		if (RightPWM > 100) {RightPWM = 100;} 
+		else if (RightPWM < -100) {RightPWM = -100;}
+		
+		if(RunFlag){
+			Set_Motor1(LeftPWM);
+			Set_Motor2(RightPWM);
+		}else{
+			Set_Motor1(LeftPWM);
+			Set_Motor2(RightPWM);			
+		}
+		
+		
+//	}	
 }
