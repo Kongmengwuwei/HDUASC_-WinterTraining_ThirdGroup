@@ -5,32 +5,34 @@
 static fifo_struct bluetooth_fifo;
 char BlueSerial_RxPacket[64];
 uint8_t BlueSerial_RxFlag;
-uint8 data_buffer[32];
-uint8 data_len;
 
 void Bluetooth_Init (void)
 {
 	fifo_init(&bluetooth_fifo, FIFO_DATA_8BIT, BlueSerial_RxPacket, 64);
-    gpio_init(BLUETOOTH_CH9141_RTS_PIN, GPI, 1, GPI_PULL_UP);                   // 初始化流控引脚
+    gpio_init(BLUETOOTH_CH9141_RTS_PIN, GPI, 1, GPI_PULL_UP);
     uart_init(UART_8, 9600, UART8_TX_D16, UART8_RX_D17);
     uart_rx_interrupt(UART_8, 1);
 }
 
+//发送字节
 void BlueSerial_SendByte(uint8_t Byte)
 {
 	uart_write_byte(UART_8, Byte);
 }
 
+//发送数组
 void BlueSerial_SendArray(uint8_t *Array, uint16_t Length)
 {
 	uart_write_buffer (UART_8, Array, Length);
 }
 
+//发送字符串
 void BlueSerial_SendString(char *String)
 {
 	uart_write_string (UART_8, String);
 }
 
+//发送数字辅助函数
 uint32_t BlueSerial_Pow(uint32_t X, uint32_t Y)
 {
 	uint32_t Result = 1;
@@ -41,6 +43,7 @@ uint32_t BlueSerial_Pow(uint32_t X, uint32_t Y)
 	return Result;
 }
 
+//发送数字
 void BlueSerial_SendNumber(uint32_t Number, uint8_t Length)
 {
 	uint8_t i;
@@ -50,6 +53,7 @@ void BlueSerial_SendNumber(uint32_t Number, uint8_t Length)
 	}
 }
 
+//格式化发送数据
 void BlueSerial_Printf(char *format, ...)
 {
 	char String[100];
@@ -60,14 +64,13 @@ void BlueSerial_Printf(char *format, ...)
 	BlueSerial_SendString(String);
 }
 
+/*接受中断*/
 void uart_rx_interrupt_handler(void)
 {
 	static uint8_t RxState = 0;
 	static uint8_t pRxPacket = 0;
 	if(kLPUART_RxDataRegFullFlag & LPUART_GetStatusFlags(LPUART8))
 	{
-			// 接收中断
-		// wireless_module_uart_handler();
 		uint8_t RxData = uart_read_byte (UART_8);
 		
 		if (RxState == 0)
@@ -96,20 +99,22 @@ void uart_rx_interrupt_handler(void)
 	}
 	LPUART_ClearStatusFlags(LPUART8, kLPUART_RxOverrunFlag);    // 不允许删除
 }
-
+/*蓝牙更新*/
 void BlueTooth_Update (void)
 {
 		if (BlueSerial_RxFlag == 1)								//有接收
 		{
 			char *Tag = strtok(BlueSerial_RxPacket, ",");		//标签
 			
-			if (strcmp(Tag, "key") == 0)						//按键
+			
+			if (strcmp(Tag, "key") == 0)								//按键
 			{
 				char *Name = strtok(NULL, ",");
 				char *Action = strtok(NULL, ",");
 				
 			}
-			else if (strcmp(Tag, "slider") == 0)				//滑块
+			
+			else if (strcmp(Tag, "slider") == 0)				//滑块（调参）
 			{
 				char *Name = strtok(NULL, ",");
 				char *Value = strtok(NULL, ",");
@@ -138,8 +143,21 @@ void BlueTooth_Update (void)
 				{
 					parameter[2][2] = atof(Value);
 				}
+				else if (strcmp(Name, "TurnKp") == 0)
+				{
+					parameter[3][0] = atof(Value);
+				}
+				else if (strcmp(Name, "TurnKi") == 0)
+				{
+					parameter[3][1] = atof(Value);
+				}
+				else if (strcmp(Name, "TurnKd") == 0)
+				{
+					parameter[3][2] = atof(Value);
+				}
 			}
-			else if (strcmp(Tag, "joystick") == 0)				//摇杆
+			
+			else if (strcmp(Tag, "joystick") == 0)				//摇杆（遥控）
 			{
 				int8_t LH = atoi(strtok(NULL, ","));
 				int8_t LV = atoi(strtok(NULL, ","));

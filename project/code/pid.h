@@ -3,6 +3,7 @@
 
 #include "zf_common_headfile.h"
 
+//PID参数结构体
 typedef struct {
 	float Target;
 	float Actual;
@@ -39,4 +40,5 @@ void PID_Update(PID_t *p);
 void Angle_Tweak (void);
 void Speed_Tweak (void);
 void Turn_Tweak(void);
+
 #endif

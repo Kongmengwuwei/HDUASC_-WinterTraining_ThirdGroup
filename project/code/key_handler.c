@@ -1,10 +1,10 @@
 #include "key_handler.h"
 
 static key_event_enum key_event[4];				//按键事件
-static key_state_enum key_prev_state[4];		//上个状态
+static key_state_enum key_prev_state[4];	//上个状态
 static uint8 key_long_triggered[4];				//长按标识
 static uint16 key_repeat_timer[4];				//重复计时
-static uint32 scan_period = 10;					//扫描周期
+static uint32 scan_period = 10;						//扫描周期
 
 void key_handler_init(void)					//按键处理初始化
 {
@@ -28,22 +28,22 @@ void key_event_scan(void)						//按键时间扫描
 		curr_state = key_get_state(i);
 		
 		switch (curr_state) {
-			case KEY_RELEASE:								//不按
+			case KEY_RELEASE:		  //不按
 				key_long_triggered[i] = 0;
 				key_repeat_timer[i] = 0;
 				break;
 
-			case KEY_SHORT_PRESS:							//短按
+			case KEY_SHORT_PRESS: //短按
 				key_event[i] = KEY_EVENT_CLICK;
 				key_clear_state(i);
 				break;
 
-			case KEY_LONG_PRESS:							//长按
+			case KEY_LONG_PRESS:	//长按
 				if (!key_long_triggered[i]) {
 					key_event[i] = KEY_EVENT_LONG;
 					key_long_triggered[i] = 1;
 					key_repeat_timer[i] = 0;
-				} else {									//已经长按
+				} else {						//已经长按
 					key_repeat_timer[i] += scan_period;
 					if (key_repeat_timer[i] >= KEY_REPEAT_INTERVAL) {
 						key_repeat_timer[i] = 0;

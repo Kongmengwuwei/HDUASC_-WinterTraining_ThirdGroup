@@ -1,7 +1,7 @@
 #include "flash.h"
 #include "menu.h"
 
-/*Flash上传*/
+/*Flash存储*/
 void Flash_Upload(void)
 {
 	flash_buffer_clear();
@@ -20,7 +20,7 @@ void Flash_Upload(void)
 	flash_write_page_from_buffer(FLASH_SECTION_INDEX, FLASH_PAGE_INDEX);
 }
 
-/*Flash下载*/
+/*Flash读取*/
 void Flash_Download(void)
 {
 	flash_read_page_to_buffer(FLASH_SECTION_INDEX, FLASH_PAGE_INDEX);
