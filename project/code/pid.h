@@ -40,5 +40,6 @@ void PID_Update(PID_t *p);
 void Angle_Tweak (void);
 void Speed_Tweak (void);
 void Turn_Tweak(void);
+void Trace_Tweak(void);
 
 #endif

@@ -86,7 +86,7 @@ void Angle_Tweak (void)		//角度环PID（结果输出给电机）
 	AnglePID.Kd = parameter[1][2];
 	
 	//俯仰角过大自动停机
-	if (pitch > 60 || pitch < -60) 
+	if (pitch > 30 || pitch < -30) 
 	{
 		RunFlag = 0;
 	}

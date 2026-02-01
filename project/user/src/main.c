@@ -19,10 +19,10 @@ int main(void)
 	debug_init();										// 调试端口初始化
 	system_delay_ms(300);	
 	key_init(10);
-	Bluetooth_Init();	
+	key_handler_init();	
 	Sensor_Init();
 	flash_init();
-	key_handler_init();
+	Bluetooth_Init();
 	Menu_Init();
 	Mpu6050_Init();
 	Motor_Init();
@@ -30,8 +30,8 @@ int main(void)
 	interrupt_global_enable(0);
 	
 	/*测试使用*/
-//	Set_Motor1(50);
-//	Set_Motor2(50);
+//	Set_Motor1(-50);
+//	Set_Motor2(-50);
 
 	while(1)
 	{
@@ -41,10 +41,10 @@ int main(void)
 		BlueTooth_Update();	//蓝牙刷新
 		
 		/*测试使用*/
-//		ips200_show_float(0,96,LeftSpeed,4,2);
-//		ips200_show_float(0,112,RightSpeed,4,2);
+		ips200_show_float(0,96,LeftSpeed,4,2);
+		ips200_show_float(0,112,RightSpeed,4,2);
 //		BlueSerial_Printf("[plot,%f,%f]", SpeedPID.Target, AveSpeed);
-//		BlueSerial_Printf("[plot,%f,%f,%f]", LeftSpeed, RightSpeed,AveSpeed);
+		BlueSerial_Printf("[plot,%f,%f,%f]", LeftSpeed, RightSpeed,AveSpeed);
 	}
 }
 
@@ -77,7 +77,7 @@ void pit_handler(void)  //1ms定时中断
 		AveSpeed = (LeftSpeed + RightSpeed) / 2.0;
 		DifSpeed = LeftSpeed - RightSpeed;
 			
-	  Speed_Tweak();	//速度环PID
-		Turn_Tweak();		//转向环PID
+//	  Speed_Tweak();	//速度环PID
+//		Turn_Tweak();		//转向环PID
 	}
 }
