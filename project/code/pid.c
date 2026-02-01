@@ -14,16 +14,16 @@ PID_t AnglePID = {
 	.OutMax = 100,
 	.OutMin = -100,
 	
-	.OutOffset=3,
-	.ErrorIntMax=1000,
-	.ErrorIntMin=-1000,
+	.OutOffset=0,
+	.ErrorIntMax=100,
+	.ErrorIntMin=-100,
 };
 PID_t SpeedPID = {
-	.OutMax = 20,
-	.OutMin = -20,
+	.OutMax = 10,
+	.OutMin = -10,
 	
-	.ErrorIntMax = 150,
-	.ErrorIntMin = -150,
+	.ErrorIntMax = 100,
+	.ErrorIntMin = -100,
 };
 PID_t TurnPID = {
 	.OutMax = 0,
@@ -86,7 +86,7 @@ void Angle_Tweak (void)		//角度环PID（结果输出给电机）
 	AnglePID.Kd = parameter[1][2];
 	
 	//俯仰角过大自动停机
-	if (pitch > 30 || pitch < -30) 
+	if (pitch > 50 || pitch < -50) 
 	{
 		RunFlag = 0;
 	}

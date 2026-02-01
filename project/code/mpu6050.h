@@ -3,16 +3,25 @@
 
 #include "zf_common_headfile.h"
 
-#define MPU_ADDR			0x68
-#define SAMPLE_FREQ			500.0f							// 采样频率(Hz)
-#define TWO_KP				20.0f							//比例增益
-#define TWO_KI				0.3f							//积分增益
+// 卡尔曼滤波结构体
+typedef struct {
+    float Q_angle;   // 角度过程噪声协方差
+    float Q_bias;    // 偏差过程噪声协方差
+    float R_measure; // 测量噪声协方差
+    
+    float angle;     // 计算出的角度（滤波后）
+    float bias;      // 陀螺仪偏差
+    float rate;      // 未经滤波的角速度
+    
+    float P[2][2];   // 误差协方差矩阵
+} KalmanFilter;
 
-extern float ax,ay,az,gx,gy,gz;
-extern float pitch, roll, yaw;
+extern float gyro_yaw , gyro_pitch , acc_yaw , acc_pitch;
+extern float yaw, pitch, roll;
+extern int16 AX, AY, AZ;
+extern KalmanFilter KF;
 
-void Mpu6050_Init(void);
-void Mpu6050_Read(void);
-void Mpu6050_Show(void);
+void Kalman_Init(KalmanFilter* kf,float Q_angle,float Q_bias,float R_measure);
+void Calculate_Attitude(void);
 
 #endif

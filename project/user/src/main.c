@@ -24,7 +24,8 @@ int main(void)
 	flash_init();
 	Bluetooth_Init();
 	Menu_Init();
-	Mpu6050_Init();
+	mpu6050_init();	
+	Kalman_Init(&KF, 0.0005f, 0.003f, 0.1f);
 	Motor_Init();
 	Pit_Init();
 	interrupt_global_enable(0);
@@ -37,35 +38,43 @@ int main(void)
 	{
 		key_event_scan();		//按键检测
 		Menu_Update();			//菜单刷新
-		Mpu6050_Show();			//陀螺仪数据
 		BlueTooth_Update();	//蓝牙刷新
 		
 		/*测试使用*/
 		ips200_show_float(0,96,LeftSpeed,4,2);
 		ips200_show_float(0,112,RightSpeed,4,2);
+		ips200_show_float(0,128,pitch,4,2);
 //		BlueSerial_Printf("[plot,%f,%f]", SpeedPID.Target, AveSpeed);
-		BlueSerial_Printf("[plot,%f,%f,%f]", LeftSpeed, RightSpeed,AveSpeed);
+//			BlueSerial_Printf("[plot,%f]", pitch);
+		BlueSerial_Printf("[plot,%f,%f]", pitch ,AveSpeed);
 	}
 }
 
 void pit_handler(void)  //1ms定时中断
 {
-	static uint16 count;
-	count++;
+	static uint16 count0,count1;
+	count0++;
+	count1++;
 	
-	
-	/*1ms*/
-	Mpu6050_Read();		//读取陀螺仪
-	Angle_Tweak();		//角度环PID
-	
+	/*2ms*/
+	if(count1>=2)
+	{
+	count1=0;		
+	Calculate_Attitude();	//姿态解算
+	Angle_Tweak();		 		//角度环PID	
+	}
 	
 	/*10ms*/
-	if(count>=10)
+	if(count0>=10)
 	{
-		count=0;
-		//读取编码器（滤波控制波动）
-		LeftSpeed = 0.3 * (encoder_get_count(ENCODER_1) / 44.0 / 0.01 / 30.0 ) + 0.7 * Last_LeftSpeed;
-		RightSpeed = 0.3 * (encoder_get_count(ENCODER_2) / 44.0 / 0.01 / 30.0 ) + 0.7* Last_RightSpeed;
+		count0=0;
+	
+		//读取编码器（动态滤波控制波动）		
+		float speed_filter = 1.0; 
+    if(fabs(pitch) < 5 ) { speed_filter = 0.2; } 	 // 静态强滤波
+    else { speed_filter = 0.5;}  									 // 动态弱滤波
+		LeftSpeed = speed_filter * (encoder_get_count(ENCODER_1) / 44.0 / 0.01 / 30.0 ) + (1-speed_filter) * Last_LeftSpeed;
+		RightSpeed = speed_filter * (encoder_get_count(ENCODER_2) / 44.0 / 0.01 / 30.0 ) + (1-speed_filter)* Last_RightSpeed;
 		if(Last_LeftSpeed-LeftSpeed>=0.3  || Last_LeftSpeed-LeftSpeed<=-0.3)LeftSpeed=Last_LeftSpeed;
 		if(Last_RightSpeed-RightSpeed>=0.3  || Last_RightSpeed-RightSpeed<=-0.3)RightSpeed=Last_RightSpeed;
 		encoder_clear_count(ENCODER_1);
@@ -77,7 +86,7 @@ void pit_handler(void)  //1ms定时中断
 		AveSpeed = (LeftSpeed + RightSpeed) / 2.0;
 		DifSpeed = LeftSpeed - RightSpeed;
 			
-//	  Speed_Tweak();	//速度环PID
-//		Turn_Tweak();		//转向环PID
+	  Speed_Tweak();	//速度环PID
+		Turn_Tweak();		//转向环PID
 	}
 }
