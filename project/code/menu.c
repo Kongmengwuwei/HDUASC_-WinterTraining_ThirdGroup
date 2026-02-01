@@ -41,7 +41,7 @@ void Draw_PID_Select (void)
 	ips200_show_string(0,16,"==>Angle");
 	ips200_show_string(24,32,"Speed");
 	ips200_show_string(24,48,"Turn");
-	ips200_show_string(24,64,"Position");
+	ips200_show_string(24,64,"Trace");
 	min_row = 16;max_row = 64;
 }
 
@@ -75,10 +75,10 @@ void Draw_Turn (void)
 	min_row = 16;max_row = 48;
 }
 
-void Draw_Position (void)
+void Draw_Trace (void)
 {
 	Menu_Clear();menu_cursor = 16;
-	ips200_show_string(0,0,"Position Edit");
+	ips200_show_string(0,0,"Trace Edit");
 	ips200_show_string(0,16,"==>Kp =");
 	ips200_show_string(24,32,"Ki =");
 	ips200_show_string(24,48,"Kd =");
@@ -91,7 +91,7 @@ void Draw_PID (int mode)
 		case 1: Draw_Angle(); break;
 		case 2: Draw_Speed(); break;
 		case 3: Draw_Turn(); break;
-		default: Draw_Position();
+		default: Draw_Trace();
 	}
 }
 

@@ -18,7 +18,7 @@ typedef enum {
 	Angle,
 	Speed,
 	Turn,
-	Position
+	Trace
 } Param;
 
 #define ROW_LENGTH		(16)

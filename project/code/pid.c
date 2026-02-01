@@ -1,6 +1,7 @@
 #include "pid.h"
 #include "mpu6050.h"
 #include "Motor.h"
+#include "sensor.h"
 #include "menu.h"
 
 uint8 RunFlag = 1; 	//运行标志位
@@ -27,6 +28,10 @@ PID_t SpeedPID = {
 PID_t TurnPID = {
 	.OutMax = 0,
 	.OutMin = -50,
+};
+PID_t TracePID = {
+	.OutMax = 0,
+	.OutMin = 0,
 };
 
 /*PID参数清除*/
@@ -134,5 +139,19 @@ void Turn_Tweak(void)		//转向环PID（结果输出给角度环）
 		TurnPID.Actual = DifSpeed;
 		PID_Update(&TurnPID);
 		DifPWM = TurnPID.Out;
+	}
+}
+
+void Trace_Tweak(void)		//转向环PID（结果输出给角度环）
+{
+	TurnPID.Kp = parameter[4][0];
+	TurnPID.Ki = parameter[4][1];
+	TurnPID.Kd = parameter[4][2];
+	
+	if (RunFlag)
+	{
+		TracePID.Actual = Sensor_Check();
+		PID_Update(&TracePID);
+		TurnPID.Target = TracePID.Out;
 	}
 }

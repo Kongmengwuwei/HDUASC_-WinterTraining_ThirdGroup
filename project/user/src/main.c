@@ -4,26 +4,28 @@
 // 第二步 project->clean  等待下方进度条走完
 #include "pit.h"
 #include "key_handler.h"
-#include "menu.h"
-#include "flash.h"
+#include "sensor.h"
 #include "mpu6050.h"
 #include "Motor.h"
-#include "pid.h"
 #include "bluetooth.h"
+#include "menu.h"
+#include "flash.h"
+#include "pid.h"
 
 int main(void)
 {
 	/*初始化部分*/
 	clock_init(SYSTEM_CLOCK_600M);	// 不可删除
 	debug_init();										// 调试端口初始化
-	system_delay_ms(300);
-	Bluetooth_Init();
-	Motor_Init();
-	flash_init();
+	system_delay_ms(300);	
 	key_init(10);
+	Bluetooth_Init();	
+	Sensor_Init();
+	flash_init();
 	key_handler_init();
 	Menu_Init();
 	Mpu6050_Init();
+	Motor_Init();
 	Pit_Init();
 	interrupt_global_enable(0);
 	
