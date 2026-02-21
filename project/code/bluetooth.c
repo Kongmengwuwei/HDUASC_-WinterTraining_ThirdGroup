@@ -119,41 +119,53 @@ void BlueTooth_Update (void)
 				char *Name = strtok(NULL, ",");
 				char *Value = strtok(NULL, ",");
 				
-				if (strcmp(Name, "AngleKp") == 0)
+				if (strcmp(Name, "GyroKp") == 0)
 				{
 					parameter[1][0] = atof(Value);
 				}
-				else if (strcmp(Name, "AngleKi") == 0)
+				else if (strcmp(Name, "GyroKi") == 0)
 				{
 					parameter[1][1] = atof(Value);
 				}
-				else if (strcmp(Name, "AngleKd") == 0)
+				else if (strcmp(Name, "GyroKd") == 0)
 				{
 					parameter[1][2] = atof(Value);
 				}
-				else if (strcmp(Name, "SpeedKp") == 0)
+				if (strcmp(Name, "AngleKp") == 0)
 				{
 					parameter[2][0] = atof(Value);
 				}
-				else if (strcmp(Name, "SpeedKi") == 0)
+				else if (strcmp(Name, "AngleKi") == 0)
 				{
 					parameter[2][1] = atof(Value);
 				}
-				else if (strcmp(Name, "SpeedKd") == 0)
+				else if (strcmp(Name, "AngleKd") == 0)
 				{
 					parameter[2][2] = atof(Value);
 				}
-				else if (strcmp(Name, "TurnKp") == 0)
+				else if (strcmp(Name, "SpeedKp") == 0)
 				{
 					parameter[3][0] = atof(Value);
 				}
-				else if (strcmp(Name, "TurnKi") == 0)
+				else if (strcmp(Name, "SpeedKi") == 0)
 				{
 					parameter[3][1] = atof(Value);
 				}
-				else if (strcmp(Name, "TurnKd") == 0)
+				else if (strcmp(Name, "SpeedKd") == 0)
 				{
 					parameter[3][2] = atof(Value);
+				}
+				else if (strcmp(Name, "TurnKp") == 0)
+				{
+					parameter[4][0] = atof(Value);
+				}
+				else if (strcmp(Name, "TurnKi") == 0)
+				{
+					parameter[4][1] = atof(Value);
+				}
+				else if (strcmp(Name, "TurnKd") == 0)
+				{
+					parameter[4][2] = atof(Value);
 				}
 			}
 			

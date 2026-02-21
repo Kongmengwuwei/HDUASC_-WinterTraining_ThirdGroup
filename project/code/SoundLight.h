@@ -3,7 +3,7 @@
 
 #include "zf_common_headfile.h"
 
-#define LED				(B9)
+#define LED				(C6)
 #define Buzzer			(B11)
 #define Act_Duration	(5)
 

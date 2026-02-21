@@ -7,7 +7,7 @@
 Menu curr_menu = Main;							//初始菜单
 uint8_t menu_cursor = 0;						//光标位置
 uint8_t min_row = 0,max_row = 0;		//上下行限
-float parameter[5][3] = {0};				//参数数组
+float parameter[6][3] = {0};				//参数数组
 
 uint8_t pidmode = 0,pid_selected = 0, pid_edit = 0, pid_row = 0;		//PID选择
 
@@ -38,11 +38,22 @@ void Draw_PID_Select (void)
 {
 	Menu_Clear();menu_cursor = 16;
 	ips200_show_string(0,0,"PID Select");
-	ips200_show_string(0,16,"==>Angle");
-	ips200_show_string(24,32,"Speed");
-	ips200_show_string(24,48,"Turn");
-	ips200_show_string(24,64,"Trace");
-	min_row = 16;max_row = 64;
+	ips200_show_string(0,16,"==>Gyro");	
+	ips200_show_string(24,32,"Angle");
+	ips200_show_string(24,48,"Speed");
+	ips200_show_string(24,64,"Turn");
+	ips200_show_string(24,80,"Trace");
+	min_row = 16;max_row = 80;
+}
+
+void Draw_Gyro (void)
+{
+	Menu_Clear();menu_cursor = 16;
+	ips200_show_string(0,0,"Gyro Edit");
+	ips200_show_string(0,16,"==>Kp =");
+	ips200_show_string(24,32,"Ki =");
+	ips200_show_string(24,48,"Kd =");
+	min_row = 16;max_row = 48;
 }
 
 void Draw_Angle (void)
@@ -88,9 +99,10 @@ void Draw_Trace (void)
 void Draw_PID (int mode)
 {
 	switch (mode){
-		case 1: Draw_Angle(); break;
-		case 2: Draw_Speed(); break;
-		case 3: Draw_Turn(); break;
+		case 1: Draw_Gyro(); break;		
+		case 2: Draw_Angle(); break;
+		case 3: Draw_Speed(); break;
+		case 4: Draw_Turn(); break;
 		default: Draw_Trace();
 	}
 }

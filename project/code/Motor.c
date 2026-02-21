@@ -1,5 +1,7 @@
 #include "Motor.h"
 
+float leftspeed,rightspeed;
+
 void Motor_Init()
 {
 		gpio_init(MOTOR1_1, GPO, GPIO_HIGH, GPO_PUSH_PULL);               // GPIO 初始化为输出 默认上拉输出高
@@ -42,4 +44,12 @@ void Set_Motor2(int16 pwm2)							//设置2号电机（右轮）
 		gpio_set_level(MOTOR2_2, GPIO_LOW);
 		pwm_set_duty(MOTOR2_PWM, -pwm2 * (PWM_DUTY_MAX / 100));	
 	}
+}
+
+void Read_Encoder(void)
+{
+	leftspeed=encoder_get_count(ENCODER_1);
+	encoder_clear_count(ENCODER_1);
+	rightspeed=encoder_get_count(ENCODER_2);	
+	encoder_clear_count(ENCODER_2);		
 }

@@ -37,6 +37,8 @@ extern PID_t AnglePID, SpeedPID, TurnPID;
 
 void PID_Init(PID_t *p);
 void PID_Update(PID_t *p);
+
+void Gyro_Tweak (void);
 void Angle_Tweak (void);
 void Speed_Tweak (void);
 void Turn_Tweak(void);

@@ -19,8 +19,11 @@
 #define ENCODER_2_A                 (QTIMER1_ENCODER2_CH1_C2)
 #define ENCODER_2_B                 (QTIMER1_ENCODER2_CH2_C24)
 
+extern float leftspeed,rightspeed;
+
 void Motor_Init();
 void Set_Motor1(int16 pwm1);
 void Set_Motor2(int16 pwm2);
+void Read_Encoder(void);
 
 #endif

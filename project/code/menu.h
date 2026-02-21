@@ -23,7 +23,7 @@ typedef enum {
 
 #define ROW_LENGTH		(16)
 
-extern float parameter[5][3];
+extern float parameter[6][3];
 
 void Menu_Init(void);
 void Menu_Update(void);
