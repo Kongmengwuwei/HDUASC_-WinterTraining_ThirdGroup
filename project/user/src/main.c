@@ -7,6 +7,7 @@
 #include "sensor.h"
 #include "mpu6050.h"
 #include "Motor.h"
+#include "Encoder.h"
 #include "bluetooth.h"
 #include "menu.h"
 #include "flash.h"
@@ -26,6 +27,7 @@ int main(void)
 	Menu_Init();
 	mpu6050_init();	
 	Kalman_Init(&KF, 0.0005f, 0.003f, 0.1f);
+	Encoder_Init();
 	Motor_Init();
 	Pit_Init();
 	interrupt_global_enable(0);
@@ -41,8 +43,8 @@ int main(void)
 		BlueTooth_Update();	//蓝牙刷新
 		
 		/*测试使用*/
-		ips200_show_float(0,96,LeftSpeed,4,2);
-		ips200_show_float(0,112,RightSpeed,4,2);
+//		ips200_show_float(0,96,LeftSpeed,4,2);
+//		ips200_show_float(0,112,RightSpeed,4,2);
 		ips200_show_float(0,128,pitch,4,2);
 		ips200_show_float(0,144,gyro_pitch,4,2);
 		
@@ -55,6 +57,7 @@ void pit_handler(void)  //1ms定时中断
 {
 	static uint16 count0,count1;
 	count0++;
+	
 	count1++;
 	
 	count1=0;
@@ -79,26 +82,19 @@ void pit_handler(void)  //1ms定时中断
 		float speed_filter = 1.0; 
     if(fabs(pitch) < 3.5f ) { speed_filter = 0.1f; } 	 // 静态强滤波
     else { speed_filter = 0.5f;}  									 // 动态弱滤波
-		LeftSpeed = speed_filter * (leftspeed / 44.0 / 0.01 / 30.0 ) + (1-speed_filter) * Last_LeftSpeed;
-		RightSpeed = speed_filter * (rightspeed / 44.0 / 0.01 / 30.0 ) + (1-speed_filter)* Last_RightSpeed;
+		LeftSpeed = speed_filter * (leftcount / 44.0 / 0.01 / 30.0 ) + (1-speed_filter) * Last_LeftSpeed;
+		RightSpeed = speed_filter * (rightcount  / 44.0 / 0.01 / 30.0) + (1-speed_filter)* Last_RightSpeed;
+		Last_LeftSpeed=LeftSpeed;
+		Last_RightSpeed=RightSpeed;
 		if(Last_LeftSpeed-LeftSpeed>=0.5 || Last_LeftSpeed-LeftSpeed<=-0.5)LeftSpeed=Last_LeftSpeed;
 		if(Last_RightSpeed-RightSpeed>=0.5 || Last_RightSpeed-RightSpeed<=-0.5)RightSpeed=Last_RightSpeed;
 		
-//		//读取编码器（一阶线性滤波控制波动）		
-//		float speed_filter = 0.3; 
-//		LeftSpeed = speed_filter * (encoder_get_count(ENCODER_1) / 44.0 / 0.01 / 30.0 ) + (1-speed_filter) * Last_LeftSpeed;
-//		RightSpeed = speed_filter * (encoder_get_count(ENCODER_2) / 44.0 / 0.01 / 30.0 ) + (1-speed_filter)* Last_RightSpeed;
-//		encoder_clear_count(ENCODER_1);
-//		encoder_clear_count(ENCODER_2);		
-		
 		//计算速度
-		Last_LeftSpeed=LeftSpeed;
-		Last_RightSpeed=RightSpeed;
 		AveSpeed = (LeftSpeed + RightSpeed) / 2.0;
 		DifSpeed = LeftSpeed - RightSpeed;
 			
 	  Speed_Tweak();	//速度环PID
-//		Turn_Tweak();		//转向环PID		
+		Turn_Tweak();		//转向环PID		
 	}
 	
 	

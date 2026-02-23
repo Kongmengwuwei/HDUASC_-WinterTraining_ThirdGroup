@@ -176,8 +176,8 @@ void BlueTooth_Update (void)
 				int8_t RH = atoi(strtok(NULL, ","));
 				int8_t RV = atoi(strtok(NULL, ","));
 				
-				SpeedPID.Target = LV / 25.0;
-				TurnPID.Target = RH / 25.0;
+				SpeedPID.Target = LV / 300.0;
+				TurnPID.Target = RH / 300.0;
 			}
 			
 			BlueSerial_RxFlag = 0;
