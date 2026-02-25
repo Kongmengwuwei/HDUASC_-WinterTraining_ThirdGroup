@@ -4,6 +4,8 @@
 #include "pid.h"
 #include "Motor.h"
 
+extern uint8 RunFlag, Mode;
+
 Menu curr_menu = Main;							//初始菜单
 uint8_t menu_cursor = 0;						//光标位置
 uint8_t min_row = 0,max_row = 0;		//上下行限
@@ -166,8 +168,8 @@ void Menu_Update(void)
 	}
 	else if(curr_menu == CarCheck)
 	{
-		static uint8 flag = 0,carmode = 1;
-		ips200_show_int(80,16,carmode,1);
+		static uint8 flag = 0;
+		ips200_show_int(80,16,Mode,1);
 		if(!flag)
 		{
 			if(k1 == KEY_EVENT_CLICK)Menu_MoveCursor(-1,min_row,max_row);
@@ -179,14 +181,15 @@ void Menu_Update(void)
 		{
 			if(menu_cursor == 16)
 			{
-				if(k1 == KEY_EVENT_CLICK){if(carmode < 5) carmode++; else carmode = 1;}
-				if(k2 == KEY_EVENT_CLICK){if(carmode > 1) carmode--; else carmode = 5;}
+				if(k1 == KEY_EVENT_CLICK){if(Mode < 5) Mode++; else Mode = 1;}
+				if(k2 == KEY_EVENT_CLICK){if(Mode > 1) Mode--; else Mode = 5;}
 				if(k4 == KEY_EVENT_CLICK){Flash_Upload();ips200_show_string(176,0,"      ");flag = 0;}
 			}
 			else if(menu_cursor == 32)
 			{
 				if(k3 == KEY_EVENT_CLICK){
 				RunFlag = 1;
+				PID_Init(&GyroPID);				
 				PID_Init(&AnglePID);
 				PID_Init(&SpeedPID);
 				PID_Init(&TurnPID);
@@ -196,7 +199,7 @@ void Menu_Update(void)
 				if(k4 == KEY_EVENT_CLICK){ips200_show_string(176,0,"      ");flag = 0;}
 			}
 		}
-		parameter[Carmode][0] = carmode;
+		parameter[Carmode][0] = Mode;
 	}
 	else if(curr_menu == Edit)
 	{

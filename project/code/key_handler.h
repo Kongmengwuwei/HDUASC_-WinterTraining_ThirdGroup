@@ -3,7 +3,7 @@
 
 #include "zf_common_headfile.h"
 
-typedef enum {
+typedef enum {				//按键状态结构体
 	KEY_EVENT_NONE = 0,
 	KEY_EVENT_CLICK,
 	KEY_EVENT_LONG,
@@ -11,7 +11,7 @@ typedef enum {
 	KEY_EVENT_HOLD,
 } key_event_enum;
 
-#define KEY_REPEAT_INTERVAL    (100)					//重复间隔
+#define KEY_REPEAT_INTERVAL    (100)			//重复间隔
 
 void key_handler_init (void);
 void key_event_scan (void);

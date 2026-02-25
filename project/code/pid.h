@@ -27,13 +27,12 @@ typedef struct {
 	float OutOffset;
 } PID_t;
 
-extern uint8 RunFlag;
 extern int16 LeftPWM, RightPWM;
 extern int16 AvePWM, DifPWM;
 extern float LeftSpeed, RightSpeed, Last_LeftSpeed, Last_RightSpeed;
 extern float AveSpeed, DifSpeed;
 
-extern PID_t AnglePID, SpeedPID, TurnPID;
+extern PID_t GyroPID, AnglePID, SpeedPID, TurnPID, TracePID;
 
 void PID_Init(PID_t *p);
 void PID_Update(PID_t *p);

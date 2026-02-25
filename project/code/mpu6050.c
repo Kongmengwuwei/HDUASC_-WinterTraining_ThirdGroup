@@ -2,13 +2,14 @@
 #include "math.h"
 #include "stdio.h"
 
-float time=0.001;  //时间
-float Offset=0;   //偏移
+float time=0.001;  	//时间1ms
+float Offset=0;   	//偏移
 
 float gyro_yaw , gyro_pitch , acc_yaw , acc_pitch;
 float yaw, pitch, roll;
 int16 AX, AY, AZ;
-KalmanFilter KF;
+
+KalmanFilter KF;		//卡尔曼滤波参数结构体
 
 
 /*初始化卡尔曼滤波*/
@@ -63,7 +64,8 @@ float Kalman_Calculate(KalmanFilter* kf, float newAngle, float newRate, float ti
     return kf->angle;
 }
 
-void Calculate_Attitude(void)  //姿态解算
+/*姿态解算*/
+void Calculate_Attitude(void) 
 {
 	
 		mpu6050_get_gyro();

@@ -1,47 +1,40 @@
 #include "pid.h"
 #include "mpu6050.h"
-#include "Motor.h"
 #include "sensor.h"
 #include "menu.h"
 
-uint8 RunFlag = 1; 	//运行标志位
+
 int16 LeftPWM = 0, RightPWM = 0;	//左PWM 右PWM
 int16 AvePWM = 0, DifPWM = 0;			//平均PWM 差PWM
-float LeftSpeed = 0, RightSpeed = 0, Last_LeftSpeed= 0 , Last_RightSpeed = 0; //左轮速度 右轮速度 上次左轮速度 上次右轮速度（编码器读得）
+float LeftSpeed = 0, RightSpeed = 0, Last_LeftSpeed= 0 , Last_RightSpeed = 0; //左轮速度 右轮速度 上次左轮速度 上次右轮速度
 float AveSpeed = 0, DifSpeed = 0;	//平均速度	差速
 
 
-
+/*配置各个PID*/
 PID_t GyroPID = {
 	.OutMax = 100,
 	.OutMin = -100,
-	
-	.ErrorIntMax=100,
-	.ErrorIntMin=-100,
 };
 PID_t AnglePID = {
-	.OutMax = 200,
-	.OutMin = -200,
-	
-	.OutOffset=0,
-	.ErrorIntMax=0,
-	.ErrorIntMin=0,
+	.OutMax = 300,
+	.OutMin = -300,
 };
 PID_t SpeedPID = {
-	.OutMax = 20,
-	.OutMin = -20,
+	.OutMax = 25,
+	.OutMin = -25,
 	
-	.ErrorIntMax = 100,
-	.ErrorIntMin = -100,
+	.ErrorIntMax = 50,
+	.ErrorIntMin = -50,
 };
 PID_t TurnPID = {
-	.OutMax = 0,
-	.OutMin = -50,
+	.OutMax = 80,
+	.OutMin = -80,
 };
 PID_t TracePID = {
 	.OutMax = 0,
 	.OutMin = 0,
 };
+
 
 /*PID参数清除*/
 void PID_Init(PID_t *p)
@@ -54,6 +47,7 @@ void PID_Init(PID_t *p)
 	p->Error1 = 0;
 	p->ErrorInt = 0;
 }
+
 /*PID计算函数*/
 void PID_Update(PID_t *p)
 {
@@ -75,7 +69,6 @@ void PID_Update(PID_t *p)
 	
 	p->Out = p->Kp * p->Error0
 		   + p->Ki * p->ErrorInt
-//		   + p->Kd * (p->Error0 - p->Error1);
 		   - p->Kd * (p->Actual - p->Actual1);	//微分先行
 	
 	//输出偏移
@@ -89,8 +82,8 @@ void PID_Update(PID_t *p)
 }
 
 
-
-void Gyro_Tweak (void)		//角速度环PID（结果输出为平均速度）
+/*角速度环PID（结果输出为平均速度）*/
+void Gyro_Tweak (void)
 {
 	GyroPID.Kp = parameter[1][0];
 	GyroPID.Ki = parameter[1][1];
@@ -101,7 +94,8 @@ void Gyro_Tweak (void)		//角速度环PID（结果输出为平均速度）
 	AvePWM = -GyroPID.Out;
 }
 
-void Angle_Tweak (void)		//角度环PID（结果输出给角速度环）
+/*角度环PID（结果输出给角速度环）*/
+void Angle_Tweak (void)
 {
 	AnglePID.Kp = parameter[2][0];
 	AnglePID.Ki = parameter[2][1];
@@ -112,7 +106,8 @@ void Angle_Tweak (void)		//角度环PID（结果输出给角速度环）
 	GyroPID.Target = AnglePID.Out;
 }
 
-void Speed_Tweak (void)		//速度环PID（结果输出给角度环）
+/*速度环PID（结果输出给角度环）*/
+void Speed_Tweak (void)
 {
 	SpeedPID.Kp = parameter[3][0];
 	SpeedPID.Ki = parameter[3][1];
@@ -123,8 +118,8 @@ void Speed_Tweak (void)		//速度环PID（结果输出给角度环）
 	AnglePID.Target = SpeedPID.Out;
 }
 
-
-void Turn_Tweak(void)		//转向环PID（结果输出为差速度）
+/*转向环PID（结果输出为差速度）*/
+void Turn_Tweak(void)
 {
 	TurnPID.Kp = parameter[4][0];
 	TurnPID.Ki = parameter[4][1];
@@ -135,7 +130,8 @@ void Turn_Tweak(void)		//转向环PID（结果输出为差速度）
 	DifPWM = TurnPID.Out;
 }
 
-void Trace_Tweak(void)		//转向环PID（结果输出给转向环）
+/*循迹环PID（结果输出给转向环）*/
+void Trace_Tweak(void)
 {
 	TurnPID.Kp = parameter[5][0];
 	TurnPID.Ki = parameter[5][1];

@@ -5,6 +5,7 @@ uint8 flag = 0, prev_stat = 0, curr_stat = 0;
 uint8 stat1 = 0, stat2 = 0, stat3 = 0, stat4 = 0;
 static uint16 cnt = 0;
 
+/*³õÊ¼»¯Ñ­¼£Ä£¿éÒý½Å*/
 void Sensor_Init (void)
 {
 	gpio_init(SenSor1,GPI,0,GPI_PULL_UP);
@@ -13,6 +14,7 @@ void Sensor_Init (void)
 	gpio_init(SenSor4,GPI,0,GPI_PULL_UP);
 }
 
+/*¼ì²âÑ­¼£×´Ì¬*/
 uint8 Sensor_Check (void)
 {
 	stat1 = gpio_get_level(SenSor1);

@@ -2,37 +2,41 @@
 #include "pid.h"
 #include "menu.h"
 
-static fifo_struct bluetooth_fifo;
-char BlueSerial_RxPacket[64];
-uint8_t BlueSerial_RxFlag;
+extern uint8 Mode;
 
+static fifo_struct bluetooth_fifo;
+
+char BlueSerial_RxPacket[64]; 	//接收数组
+uint8_t BlueSerial_RxFlag;			//接收标志位
+
+/*初始化蓝牙*/
 void Bluetooth_Init (void)
 {
 	fifo_init(&bluetooth_fifo, FIFO_DATA_8BIT, BlueSerial_RxPacket, 64);
-    gpio_init(BLUETOOTH_CH9141_RTS_PIN, GPI, 1, GPI_PULL_UP);
-    uart_init(UART_8, 9600, UART8_TX_D16, UART8_RX_D17);
-    uart_rx_interrupt(UART_8, 1);
+  gpio_init(BLUETOOTH_CH9141_RTS_PIN, GPI, 1, GPI_PULL_UP);
+  uart_init(UART_8, 9600, UART8_TX_D16, UART8_RX_D17);
+  uart_rx_interrupt(UART_8, 1);
 }
 
-//发送字节
+/*发送字节*/
 void BlueSerial_SendByte(uint8_t Byte)
 {
 	uart_write_byte(UART_8, Byte);
 }
 
-//发送数组
+/*发送数组*/
 void BlueSerial_SendArray(uint8_t *Array, uint16_t Length)
 {
 	uart_write_buffer (UART_8, Array, Length);
 }
 
-//发送字符串
+/*发送字符串*/
 void BlueSerial_SendString(char *String)
 {
 	uart_write_string (UART_8, String);
 }
 
-//发送数字辅助函数
+/*发送数字辅助函数*/
 uint32_t BlueSerial_Pow(uint32_t X, uint32_t Y)
 {
 	uint32_t Result = 1;
@@ -43,7 +47,7 @@ uint32_t BlueSerial_Pow(uint32_t X, uint32_t Y)
 	return Result;
 }
 
-//发送数字
+/*发送数字*/
 void BlueSerial_SendNumber(uint32_t Number, uint8_t Length)
 {
 	uint8_t i;
@@ -53,7 +57,7 @@ void BlueSerial_SendNumber(uint32_t Number, uint8_t Length)
 	}
 }
 
-//格式化发送数据
+/*格式化发送数据*/
 void BlueSerial_Printf(char *format, ...)
 {
 	char String[100];
@@ -104,7 +108,7 @@ void BlueTooth_Update (void)
 {
 		if (BlueSerial_RxFlag == 1)								//有接收
 		{
-			char *Tag = strtok(BlueSerial_RxPacket, ",");		//标签
+			char *Tag = strtok(BlueSerial_RxPacket, ",");
 			
 			
 			if (strcmp(Tag, "key") == 0)								//按键
@@ -114,7 +118,7 @@ void BlueTooth_Update (void)
 				
 			}
 			
-			else if (strcmp(Tag, "slider") == 0)				//滑块（调参）
+			else if (strcmp(Tag, "slider") == 0)				//滑块（调参功能）
 			{
 				char *Name = strtok(NULL, ",");
 				char *Value = strtok(NULL, ",");
@@ -169,15 +173,20 @@ void BlueTooth_Update (void)
 				}
 			}
 			
-			else if (strcmp(Tag, "joystick") == 0)				//摇杆（遥控）
+			else if (strcmp(Tag, "joystick") == 0)			//摇杆（遥控功能）
 			{
 				int8_t LH = atoi(strtok(NULL, ","));
 				int8_t LV = atoi(strtok(NULL, ","));
 				int8_t RH = atoi(strtok(NULL, ","));
 				int8_t RV = atoi(strtok(NULL, ","));
 				
-				SpeedPID.Target = LV / 300.0;
-				TurnPID.Target = RH / 300.0;
+				/*模式五功能*/
+				if(Mode==5)
+				{
+					SpeedPID.Target = LV / 250.0;				//控制前后加速
+					TurnPID.Target = RH / 100.0;				//控制左右转向
+				}
+				
 			}
 			
 			BlueSerial_RxFlag = 0;

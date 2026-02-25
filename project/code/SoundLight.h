@@ -3,13 +3,10 @@
 
 #include "zf_common_headfile.h"
 
-#define LED				(C6)
-#define Buzzer			(B11)
-#define Act_Duration	(5)
-
-extern uint8 LEDstat, Buzzerstat;
+#define SoundLight		(C6)
 
 void SoundLight_Init(void);
-void SoundLight_React(void);
+void SoundLight_On(void);
+void SoundLight_Off(void);
 
 #endif

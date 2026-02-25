@@ -3,7 +3,7 @@
 
 #include "zf_common_headfile.h"
 
-/*ips200_show_int(224,304,1,1);фад╩╠ъ╫Г*/
+//ips200_show_int(224,304,1,1);фад╩╠ъ╫Г
 #define IPS200_TYPE		(IPS200_TYPE_SPI)
 
 typedef enum {

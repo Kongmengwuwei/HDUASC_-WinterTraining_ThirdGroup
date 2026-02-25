@@ -6,7 +6,8 @@ static uint8 key_long_triggered[4];				//长按标识
 static uint16 key_repeat_timer[4];				//重复计时
 static uint32 scan_period = 10;						//扫描周期
 
-void key_handler_init(void)					//按键处理初始化
+/*初始化按键处理*/
+void key_handler_init(void)
 {
 	uint8 i;
 	for (i = 0; i < 4; i++) {
@@ -17,7 +18,8 @@ void key_handler_init(void)					//按键处理初始化
 	}
 }
 
-void key_event_scan(void)						//按键时间扫描
+/*按键时间扫描*/
+void key_event_scan(void)
 {
 	uint8 i;
 	key_state_enum curr_state;
@@ -56,6 +58,7 @@ void key_event_scan(void)						//按键时间扫描
 	}
 }
 
+/*获取按键状态*/
 key_event_enum key_event_get(key_index_enum key_n)
 {
 	key_event_enum event = key_event[key_n];
@@ -63,6 +66,7 @@ key_event_enum key_event_get(key_index_enum key_n)
 	return event;
 }
 
+//用处？
 uint8 key_is_hold(key_index_enum key_n)
 {
 	key_state_enum state = key_get_state(key_n);
