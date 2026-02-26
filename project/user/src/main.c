@@ -12,7 +12,7 @@
 #include "menu.h"
 #include "flash.h"
 #include "pid.h"
-
+#include "FollowRoute.h"
 uint8 RunFlag = 1; 	//电机运行标志位
 uint8 Mode = 1; 		//发车模式
 
@@ -98,6 +98,13 @@ void pit_handler(void)  //1ms定时中断
 		RunFlag = 0;
 	}
 	
+
+
+
+	//以下代码建议删除，并替换为Control()函数，Control函数中包含了姿态解算和PID控制
+	Control();
+
+	/*
 	//姿态解算
 	Calculate_Attitude();
 	
@@ -110,20 +117,23 @@ void pit_handler(void)  //1ms定时中断
 	//应用最终输出于电机
 	if (RunFlag)
 	{	
-	LeftPWM = AvePWM + DifPWM / 2;
-	RightPWM = AvePWM - DifPWM / 2;
-	
-	if (LeftPWM > 100) {LeftPWM = 100;}
-	else if (LeftPWM < -100) {LeftPWM = -100;}
-	if (RightPWM > 100) {RightPWM = 100;} 
-	else if (RightPWM < -100) {RightPWM = -100;}
-	
-	Set_Motor1(LeftPWM);
-	Set_Motor2(RightPWM);
-	}else
-	{
-	Set_Motor1(0);
-	Set_Motor2(0);
+		LeftPWM = AvePWM + DifPWM / 2;
+		RightPWM = AvePWM - DifPWM / 2;
+		
+		if (LeftPWM > 100) {LeftPWM = 100;}
+		else if (LeftPWM < -100) {LeftPWM = -100;}
+		if (RightPWM > 100) {RightPWM = 100;} 
+		else if (RightPWM < -100) {RightPWM = -100;}
+		
+		Set_Motor1(LeftPWM);
+		Set_Motor2(RightPWM);
 	}
+	else
+	{
+		Set_Motor1(0);
+		Set_Motor2(0);
+	}
+
+	*/
 	
 }
