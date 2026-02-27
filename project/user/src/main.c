@@ -9,12 +9,15 @@
 #include "Motor.h"
 #include "Encoder.h"
 #include "bluetooth.h"
+#include "SoundLight.h"
 #include "menu.h"
 #include "flash.h"
 #include "pid.h"
 #include "FollowRoute.h"
-uint8 RunFlag = 1; 	//电机运行标志位
-uint8 Mode = 1; 		//发车模式
+#include "Path_Recorder.h"
+uint8 RunFlag = 0; 	//电机运行标志位
+uint8 Mode = 5; 		//发车模式
+uint8 Recorder_Flag=0, Tracking_Flag=0;
 
 int main(void)
 {
@@ -22,9 +25,10 @@ int main(void)
 	clock_init(SYSTEM_CLOCK_600M);	// 不可删除
 	debug_init();										// 调试端口初始化
 	system_delay_ms(300);	
-
+	
 	key_init(10);										//按键初始化
 	key_handler_init();							
+	SoundLight_Init();							//声光板初始化
 	Sensor_Init();									//循迹传感器初始化
 	flash_init();                   //Flash初始化
 	Bluetooth_Init();								//蓝牙初始化
@@ -35,10 +39,13 @@ int main(void)
 	Motor_Init();										//电机初始化
 	Pit_Init();											//定时中断初始化
 	interrupt_global_enable(0);
+
+	RunFlag=1;
 	
 	/*测试使用*/
 //	Set_Motor1(-50);
 //	Set_Motor2(-50);
+//	SoundLight_On();
 
 	/*主循环*/
 	while(1)
@@ -47,41 +54,65 @@ int main(void)
 		Menu_Update();			//菜单刷新
 		BlueTooth_Update();	//蓝牙接收发送
 		
-		/*测试使用*/
-//		ips200_show_float(0,96,LeftSpeed,4,2);
-//		ips200_show_float(0,112,RightSpeed,4,2);
-//		ips200_show_float(0,128,pitch,4,2);
-//		ips200_show_float(0,144,gyro_pitch,4,2);
+		ips200_show_string(0, 128, "Mode:");
+		ips200_show_uint(64, 128, Mode, 1);
+		ips200_show_string(0, 144, "RunFlag:");
+		ips200_show_uint(64, 144, RunFlag, 1);
 		
-//		BlueSerial_Printf("[plot,%f,%f,%f]", LeftSpeed, RightSpeed, DifPWM);
+		if(Mode==4 && Recorder_Flag==1){
+			ips200_show_string(96, 128, "Recording");
+		}		
+		else if(Mode==4 && Tracking_Flag==1){
+			ips200_show_string(96, 128, "Tracking ");
+		}
+		else{
+			ips200_show_string(96, 128, "         ");
+		}
+		
+		ips200_show_uint(0, 160, path_manager.count, 4);
+//		ips200_show_float(0, 160, path_manager.points[path_manager.count], 4,4);
+		ips200_show_uint(0, 176, path_manager.current_index, 4);
+		
+//		ips200_show_float(0, 200, SpeedPID.Out,4,4);
+//		ips200_show_float(0, 216, SpeedPID.ErrorInt,4,4);
+		ips200_show_float(0, 232, SpeedPID.Target,4,4);	
+		/*测试使用*/
+//		ips200_show_float(0,144,yaw_offset,4,4);	
+		BlueSerial_Printf("[plot,%f,%f,%f]", LeftSpeed, RightSpeed);
 //		BlueSerial_Printf("[plot,%f,%f]", pitch ,gyro_pitch);
 	}
 }
 
 void pit_handler(void)  //1ms定时中断
-{
-	static uint16 count0;
-	count0++;			 				
-	/*以下为5ms定时中断*/
-	if(count0>=5)
+{	
+	static uint16 count5ms,count;
+	count5ms++;				
+	/*5ms定时中断*/
+	if(count5ms>=5)
 	{
-		count0=0;
+		count5ms=0;
 	
-		//读取编码器（动态滤波限幅控制波动）		
-		Read_Encoder();		
-		float speed_filter = 1.0; 
-    if(fabs(pitch) < 3.0f ) { speed_filter = 0.2f; } 	// 静态强滤波
-    else { speed_filter = 0.6f;}  									 	// 动态弱滤波
-		LeftSpeed = speed_filter * (leftcount / 44.0 / 0.005 / 30.0 ) + (1-speed_filter) * Last_LeftSpeed;
-		RightSpeed = speed_filter * (rightcount  / 44.0 / 0.005 / 30.0) + (1-speed_filter)* Last_RightSpeed;
-		Last_LeftSpeed=LeftSpeed;
-		Last_RightSpeed=RightSpeed;
-		if(Last_LeftSpeed-LeftSpeed>=0.5 || Last_LeftSpeed-LeftSpeed<=-0.5)LeftSpeed=Last_LeftSpeed;
-		if(Last_RightSpeed-RightSpeed>=0.5 || Last_RightSpeed-RightSpeed<=-0.5)RightSpeed=Last_RightSpeed;
-		
+		//获得左右轮速度
+		Speed_Get();		
 		//计算速度
 		AveSpeed = (LeftSpeed + RightSpeed) / 2.0;
 		DifSpeed = LeftSpeed - RightSpeed;
+		
+		count++;
+		if(Mode==4 && Recorder_Flag==1){
+			Record_PathPoint();
+		}
+		if(count>=8){
+			count=0;
+			if(Mode==4 && Tracking_Flag==1){
+				Navigation_Calculate();
+				SpeedPID.Target=Navigation_Speed;
+//			TurnPID.Target=Navigation_Turn;
+			}
+			if(Mode!=4){
+				PathTracking_Init();
+			}
+		}
 		
 		//速度环PID	
 	  Speed_Tweak();
@@ -89,7 +120,6 @@ void pit_handler(void)  //1ms定时中断
 		//转向环PID	
 		Turn_Tweak();
 	}
-	/*以上为5ms定时中断*/	
 
 	
 	//俯仰角过大自动停机
@@ -98,13 +128,6 @@ void pit_handler(void)  //1ms定时中断
 		RunFlag = 0;
 	}
 	
-
-
-
-	//以下代码建议删除，并替换为Control()函数，Control函数中包含了姿态解算和PID控制
-	Control();
-
-	/*
 	//姿态解算
 	Calculate_Attitude();
 	
@@ -115,25 +138,24 @@ void pit_handler(void)  //1ms定时中断
 	Gyro_Tweak();	
 	
 	//应用最终输出于电机
+
 	if (RunFlag)
 	{	
-		LeftPWM = AvePWM + DifPWM / 2;
-		RightPWM = AvePWM - DifPWM / 2;
-		
-		if (LeftPWM > 100) {LeftPWM = 100;}
-		else if (LeftPWM < -100) {LeftPWM = -100;}
-		if (RightPWM > 100) {RightPWM = 100;} 
-		else if (RightPWM < -100) {RightPWM = -100;}
-		
-		Set_Motor1(LeftPWM);
-		Set_Motor2(RightPWM);
+	LeftPWM = AvePWM + DifPWM / 2;
+	RightPWM = AvePWM - DifPWM / 2;
+	
+	if (LeftPWM > 100) {LeftPWM = 100;}
+	else if (LeftPWM < -100) {LeftPWM = -100;}
+	if (RightPWM > 100) {RightPWM = 100;} 
+	else if (RightPWM < -100) {RightPWM = -100;}
+	
+	Set_Motor1(LeftPWM);
+	Set_Motor2(RightPWM);
 	}
 	else
 	{
 		Set_Motor1(0);
 		Set_Motor2(0);
 	}
-
-	*/
 	
 }

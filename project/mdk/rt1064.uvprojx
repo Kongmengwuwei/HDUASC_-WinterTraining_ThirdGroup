@@ -519,6 +519,26 @@
               <FileType>5</FileType>
               <FilePath>..\code\Encoder.h</FilePath>
             </File>
+            <File>
+              <FileName>FollowRoute.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\FollowRoute.c</FilePath>
+            </File>
+            <File>
+              <FileName>FollowRoute.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\code\FollowRoute.h</FilePath>
+            </File>
+            <File>
+              <FileName>Path_Recorder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\Path_Recorder.c</FilePath>
+            </File>
+            <File>
+              <FileName>Path_Recorder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\code\Path_Recorder.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

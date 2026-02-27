@@ -1,14 +1,11 @@
 #include "pid.h"
 #include "mpu6050.h"
+#include "Encoder.h"
 #include "sensor.h"
 #include "menu.h"
 
-
 int16 LeftPWM = 0, RightPWM = 0;	//左PWM 右PWM
 int16 AvePWM = 0, DifPWM = 0;			//平均PWM 差PWM
-float LeftSpeed = 0, RightSpeed = 0, Last_LeftSpeed= 0 , Last_RightSpeed = 0; //左轮速度 右轮速度 上次左轮速度 上次右轮速度
-float AveSpeed = 0, DifSpeed = 0;	//平均速度	差速
-
 
 /*配置各个PID*/
 PID_t GyroPID = {
@@ -20,11 +17,11 @@ PID_t AnglePID = {
 	.OutMin = -300,
 };
 PID_t SpeedPID = {
-	.OutMax = 25,
-	.OutMin = -25,
+	.OutMax = 20,
+	.OutMin = -20,
 	
-	.ErrorIntMax = 50,
-	.ErrorIntMin = -50,
+	.ErrorIntMax = 20,
+	.ErrorIntMin = -20,
 };
 PID_t TurnPID = {
 	.OutMax = 80,

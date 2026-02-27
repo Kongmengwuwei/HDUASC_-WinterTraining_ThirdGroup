@@ -14,8 +14,11 @@
 #define ENCODER_2_B                 (QTIMER1_ENCODER2_CH2_C24)
 
 extern float leftcount,rightcount;
+extern float LeftSpeed, RightSpeed, Last_LeftSpeed, Last_RightSpeed;
+extern float AveSpeed, DifSpeed;
 
 void Encoder_Init(void);
 void Read_Encoder(void);
+void Speed_Get(void);
 
 #endif

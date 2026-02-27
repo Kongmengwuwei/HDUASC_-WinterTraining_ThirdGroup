@@ -16,9 +16,8 @@ typedef struct {
     float P[2][2];   // ŒÛ≤Ó–≠∑Ω≤Óæÿ’Û
 } KalmanFilter;
 
-extern float gyro_yaw , gyro_pitch , acc_yaw , acc_pitch;
-extern float yaw, pitch, roll;
-extern int16 AX, AY, AZ;
+extern float gyro_pitch, acc_pitch, pitch;
+extern float yaw;
 extern KalmanFilter KF;
 
 void Kalman_Init(KalmanFilter* kf,float Q_angle,float Q_bias,float R_measure);

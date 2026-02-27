@@ -4,7 +4,7 @@
 #include "pid.h"
 #include "Motor.h"
 
-extern uint8 RunFlag, Mode;
+extern uint8 RunFlag, Mode, Recorder_Flag, Tracking_Flag;
 
 Menu curr_menu = Main;							//初始菜单
 uint8_t menu_cursor = 0;						//光标位置

@@ -2,7 +2,7 @@
 #include "pid.h"
 #include "menu.h"
 
-extern uint8 Mode;
+extern uint8 RunFlag, Mode, Recorder_Flag, Tracking_Flag;
 
 static fifo_struct bluetooth_fifo;
 
@@ -111,11 +111,43 @@ void BlueTooth_Update (void)
 			char *Tag = strtok(BlueSerial_RxPacket, ",");
 			
 			
-			if (strcmp(Tag, "key") == 0)								//按键
+			if (strcmp(Tag, "key") == 0)								//按键(开关设置)
 			{
 				char *Name = strtok(NULL, ",");
 				char *Action = strtok(NULL, ",");
-				
+				if (strcmp(Name, "1") == 0 && strcmp(Action, "down") == 0)
+				{
+						PID_Init(&GyroPID);				
+						PID_Init(&AnglePID);
+						PID_Init(&SpeedPID);
+						PID_Init(&TurnPID);
+						RunFlag=1;
+				}	
+				if (strcmp(Name, "1") == 0 && strcmp(Action, "up") == 0)
+				{
+						RunFlag=0;
+				}
+				if (strcmp(Name, "2") == 0 && strcmp(Action, "down") == 0)
+				{
+						Mode++;
+						if(Mode==6)Mode=1;
+				}
+				if (strcmp(Name, "3") == 0 && strcmp(Action, "down") == 0)
+				{
+						Recorder_Flag=1;
+				}	
+				if (strcmp(Name, "3") == 0 && strcmp(Action, "up") == 0)
+				{
+						Recorder_Flag=0;
+				}
+				if (strcmp(Name, "4") == 0 && strcmp(Action, "down") == 0)
+				{
+						Tracking_Flag=1;
+				}	
+				if (strcmp(Name, "4") == 0 && strcmp(Action, "up") == 0)
+				{
+						Tracking_Flag=0;
+				}					
 			}
 			
 			else if (strcmp(Tag, "slider") == 0)				//滑块（调参功能）
