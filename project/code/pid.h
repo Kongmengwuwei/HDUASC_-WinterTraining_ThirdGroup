@@ -27,8 +27,8 @@ typedef struct {
 	float OutOffset;
 } PID_t;
 
-extern int16 LeftPWM, RightPWM;
-extern int16 AvePWM, DifPWM;
+extern int32 LeftPWM, RightPWM;
+extern int32 AvePWM, DifPWM;
 extern PID_t GyroPID, AnglePID, SpeedPID, TurnPID, TracePID;
 
 void PID_Init(PID_t *p);

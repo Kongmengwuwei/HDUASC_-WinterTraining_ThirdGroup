@@ -74,18 +74,17 @@ int main(void)
 		ips200_show_uint(0, 176, path_manager.current_index, 4);
 		
 //		ips200_show_float(0, 200, SpeedPID.Out,4,4);
-//		ips200_show_float(0, 216, SpeedPID.ErrorInt,4,4);
-		ips200_show_float(0, 232, SpeedPID.Target,4,4);	
+		ips200_show_float(0, 232, pitch,4,4);	
 		/*测试使用*/
 //		ips200_show_float(0,144,yaw_offset,4,4);	
-		BlueSerial_Printf("[plot,%f,%f,%f]", LeftSpeed, RightSpeed);
-//		BlueSerial_Printf("[plot,%f,%f]", pitch ,gyro_pitch);
+//		BlueSerial_Printf("[plot,%d,%d]", LeftPWM, RightPWM);
+		BlueSerial_Printf("[plot,%f,%f]", AveSpeed ,SpeedPID.Target);
 	}
 }
 
 void pit_handler(void)  //1ms定时中断
 {	
-	static uint16 count5ms,count;
+	static uint16 count5ms;
 	count5ms++;				
 	/*5ms定时中断*/
 	if(count5ms>=5)
@@ -98,20 +97,16 @@ void pit_handler(void)  //1ms定时中断
 		AveSpeed = (LeftSpeed + RightSpeed) / 2.0;
 		DifSpeed = LeftSpeed - RightSpeed;
 		
-		count++;
 		if(Mode==4 && Recorder_Flag==1){
 			Record_PathPoint();
 		}
-		if(count>=8){
-			count=0;
-			if(Mode==4 && Tracking_Flag==1){
-				Navigation_Calculate();
-				SpeedPID.Target=Navigation_Speed;
-//			TurnPID.Target=Navigation_Turn;
-			}
-			if(Mode!=4){
-				PathTracking_Init();
-			}
+		if(Mode==4 && Tracking_Flag==1){
+			Navigation_Calculate();
+			SpeedPID.Target=Navigation_Speed;
+//		TurnPID.Target=Navigation_Turn;
+		}
+		if(Mode!=4){
+			PathTracking_Init();
 		}
 		
 		//速度环PID	
@@ -144,10 +139,10 @@ void pit_handler(void)  //1ms定时中断
 	LeftPWM = AvePWM + DifPWM / 2;
 	RightPWM = AvePWM - DifPWM / 2;
 	
-	if (LeftPWM > 100) {LeftPWM = 100;}
-	else if (LeftPWM < -100) {LeftPWM = -100;}
-	if (RightPWM > 100) {RightPWM = 100;} 
-	else if (RightPWM < -100) {RightPWM = -100;}
+	if (LeftPWM > 10000) {LeftPWM = 10000;}
+	else if (LeftPWM < -10000) {LeftPWM = -10000;}
+	if (RightPWM > 10000) {RightPWM = 10000;} 
+	else if (RightPWM < -10000) {RightPWM = -10000;}
 	
 	Set_Motor1(LeftPWM);
 	Set_Motor2(RightPWM);

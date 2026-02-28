@@ -4,21 +4,21 @@
 #include "sensor.h"
 #include "menu.h"
 
-int16 LeftPWM = 0, RightPWM = 0;	//左PWM 右PWM
-int16 AvePWM = 0, DifPWM = 0;			//平均PWM 差PWM
+int32 LeftPWM = 0, RightPWM = 0;	//左PWM 右PWM
+int32 AvePWM = 0, DifPWM = 0;			//平均PWM 差PWM
 
 /*配置各个PID*/
 PID_t GyroPID = {
-	.OutMax = 100,
-	.OutMin = -100,
+	.OutMax = 10000,
+	.OutMin = -10000,
 };
 PID_t AnglePID = {
-	.OutMax = 300,
-	.OutMin = -300,
+	.OutMax = 400,
+	.OutMin = -400,
 };
 PID_t SpeedPID = {
-	.OutMax = 20,
-	.OutMin = -20,
+	.OutMax = 25,
+	.OutMin = -25,
 	
 	.ErrorIntMax = 20,
 	.ErrorIntMin = -20,
@@ -127,7 +127,7 @@ void Turn_Tweak(void)
 
 	TurnPID.Actual = DifSpeed;
 	PID_Update(&TurnPID);
-	DifPWM = TurnPID.Out;
+	DifPWM = TurnPID.Out * 100;
 }
 
 /*循迹环PID（结果输出给转向环）*/
@@ -141,7 +141,3 @@ void Trace_Tweak(void)
 	PID_Update(&TracePID);
 	TurnPID.Target = TracePID.Out;
 }
-
-
-
-

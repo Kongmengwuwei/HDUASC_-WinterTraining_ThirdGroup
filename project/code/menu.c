@@ -216,10 +216,10 @@ void Menu_Update(void)
 		}
 		else
 		{
-			if(k1 == KEY_EVENT_CLICK)parameter[pidmode][pid_row]+=0.01;
-			if(k1 == KEY_EVENT_REPEAT)parameter[pidmode][pid_row]+=0.1;
-			if(k2 == KEY_EVENT_CLICK)parameter[pidmode][pid_row]-=0.01;
-			if(k2 == KEY_EVENT_REPEAT)parameter[pidmode][pid_row]-=0.1;
+			if(k1 == KEY_EVENT_CLICK)parameter[pidmode][pid_row]+=0.1;
+			if(k1 == KEY_EVENT_REPEAT)parameter[pidmode][pid_row]+=1;
+			if(k2 == KEY_EVENT_CLICK)parameter[pidmode][pid_row]-=0.1;
+			if(k2 == KEY_EVENT_REPEAT)parameter[pidmode][pid_row]-=1;
 			if(k4 == KEY_EVENT_CLICK){Flash_Upload();ips200_show_string(176,0,"      ");flag = 0;}
 		}
 	}

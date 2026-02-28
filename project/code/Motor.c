@@ -19,12 +19,12 @@ void Set_Motor1(int16 pwm1)
 	{
 		gpio_set_level(MOTOR1_1, GPIO_LOW);
 		gpio_set_level(MOTOR1_2, GPIO_HIGH);
-		pwm_set_duty(MOTOR1_PWM, pwm1 * (PWM_DUTY_MAX / 100));
+		pwm_set_duty(MOTOR1_PWM, pwm1 * (PWM_DUTY_MAX / 10000));
 	}else
 	{
 		gpio_set_level(MOTOR1_1, GPIO_HIGH);
 		gpio_set_level(MOTOR1_2, GPIO_LOW);
-		pwm_set_duty(MOTOR1_PWM, -pwm1 * (PWM_DUTY_MAX / 100));	
+		pwm_set_duty(MOTOR1_PWM, -pwm1 * (PWM_DUTY_MAX / 10000));	
 	}
 }
 
@@ -35,11 +35,11 @@ void Set_Motor2(int16 pwm2)
 	{
 		gpio_set_level(MOTOR2_1, GPIO_LOW);
 		gpio_set_level(MOTOR2_2, GPIO_HIGH);
-		pwm_set_duty(MOTOR2_PWM, pwm2 * (PWM_DUTY_MAX / 100));
+		pwm_set_duty(MOTOR2_PWM, pwm2 * (PWM_DUTY_MAX / 10000));
 	}else
 	{
 		gpio_set_level(MOTOR2_1, GPIO_HIGH);
 		gpio_set_level(MOTOR2_2, GPIO_LOW);
-		pwm_set_duty(MOTOR2_PWM, -pwm2 * (PWM_DUTY_MAX / 100));	
+		pwm_set_duty(MOTOR2_PWM, -pwm2 * (PWM_DUTY_MAX / 10000));	
 	}
 }

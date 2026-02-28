@@ -29,7 +29,7 @@ void Speed_Get(void)
 		Read_Encoder();		
 		float speed_filter = 1.0; 
     if(fabs(pitch) < 3.0f ) { speed_filter = 0.2f; } 	// ¾²Ì¬Ç¿ÂË²¨
-    else { speed_filter = 0.4f;}  									 	// ¶¯Ì¬ÈõÂË²¨
+    else { speed_filter = 0.5f;}  									 	// ¶¯Ì¬ÈõÂË²¨
 		LeftSpeed = speed_filter * (leftcount / 44.0 / 0.005 / 30.0 ) + (1-speed_filter) * Last_LeftSpeed;
 		RightSpeed = speed_filter * (rightcount  / 44.0 / 0.005 / 30.0) + (1-speed_filter)* Last_RightSpeed;
 		Last_LeftSpeed=LeftSpeed;
