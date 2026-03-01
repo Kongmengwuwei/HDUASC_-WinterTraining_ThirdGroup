@@ -109,24 +109,17 @@ void pit_handler(void)  //1ms定时中断
 			PathTracking_Init();
 		}
 		
-		//速度环PID	
-	  Speed_Tweak();
-		
-		if(Mode == 2){
-			flag2 = 1;
-			//循迹环PID
-			Trace_Tweak();
-		}
-		else if (flag2 == 1){
-			flag2=0;
-			TurnPID.Target =0 ;
-		}
-		
-		if(Mode!=4 || Recorder_Flag!=1)
+
+
+		if(Mode == 2 || Mode == 3)
 		{
-		//转向环PID	
-		Turn_Tweak();			
+			Follow_Route();
 		}
+
+		Control5ms();
+
+
+
 	}
 
 	
@@ -136,34 +129,7 @@ void pit_handler(void)  //1ms定时中断
 		RunFlag = 0;
 	}
 	
-	//姿态解算
-	Calculate_Attitude();
-	
-	//角度环PID
-	Angle_Tweak();
-	
-	//角速度环PID	
-	Gyro_Tweak();	
-	
-	//应用最终输出于电机
 
-	if (RunFlag)
-	{	
-	LeftPWM = AvePWM + DifPWM / 2;
-	RightPWM = AvePWM - DifPWM / 2;
-	
-	if (LeftPWM > 10000) {LeftPWM = 10000;}
-	else if (LeftPWM < -10000) {LeftPWM = -10000;}
-	if (RightPWM > 10000) {RightPWM = 10000;} 
-	else if (RightPWM < -10000) {RightPWM = -10000;}
-	
-	Set_Motor1(LeftPWM);
-	Set_Motor2(RightPWM);
-	}
-	else
-	{
-		Set_Motor1(0);
-		Set_Motor2(0);
-	}
+	Control1ms();
 	
 }
