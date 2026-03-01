@@ -9,7 +9,7 @@ extern uint8 RunFlag, Mode, Recorder_Flag, Tracking_Flag;
 Menu curr_menu = Main;							//初始菜单
 uint8_t menu_cursor = 0;						//光标位置
 uint8_t min_row = 0,max_row = 0;		//上下行限
-float parameter[6][3] = {0};				//参数数组
+float parameter[7][3] = {0};				//参数数组
 
 uint8_t pidmode = 0,pid_selected = 0, pid_edit = 0, pid_row = 0;		//PID选择
 

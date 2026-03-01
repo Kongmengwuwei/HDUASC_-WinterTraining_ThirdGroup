@@ -8,7 +8,8 @@
 
 
 
-int flag_FollowRoute;                                  //flag状态位：0-暂停；1-AB；2-BC；3-CD；4-DA；
+int flag_FollowRoute = 1;                                  //flag状态位：0-暂停；1-AB；2-BC；3-CD；4-DA；
+float yaw_target = 0;
 
 
 void Follow_Route(void)
@@ -23,8 +24,11 @@ void Follow_Route(void)
    /* 模式二 */
    if(Mode == 2)
    {
-       flag_FollowRoute = 1;
        static int cnt2 = 0;
+	   if (RunFlag == 0)
+	   {
+			yaw_target = yaw;
+	   }
        /* B点判定 */
        if(flag_FollowRoute == 1)
        {
@@ -51,6 +55,7 @@ void Follow_Route(void)
                    SoundLight_On();              //鸣笛并闪灯
                    flag_FollowRoute = 3;
                    cnt2 = 0;
+				   yaw_target = yaw + 180;
                }
            }
            else   cnt2 = 0;
@@ -181,27 +186,35 @@ void Control5ms(void)
         //循迹环PID
         if(flag_FollowRoute == 1)
         {
-            SpeedPID.Target = 30;
-            TurnPID.Target = 0;
+            SpeedPID.Target = 0.30;
+//            TurnPID.Target = 0;
+			YAWPID.Target = yaw_target;
+            YAW_Tweak();
         }
 
         else if(flag_FollowRoute == 2)
         {
-            SpeedPID.Target = 30;
+            SpeedPID.Target = 0.30;
             //循迹环PID,相当于TurnPID.Target = TracePID.Out
             Trace_Tweak();
         }
 
         else if(flag_FollowRoute == 3)
         {
-            SpeedPID.Target = 30;
-            TurnPID.Target = 0;       
+            SpeedPID.Target = 0.30;
+//            TurnPID.Target = 0;
+			YAWPID.Target = yaw_target;
+            YAW_Tweak();   
         }
         else if(flag_FollowRoute == 4)
         {
-            SpeedPID.Target = 30;
+            SpeedPID.Target = 0.30;
             //循迹环PID,相当于TurnPID.Target = TracePID.Out
             Trace_Tweak();
+        }
+		else if(flag_FollowRoute == 0)
+        {
+			RunFlag = 0;
         }
     }
 
@@ -233,40 +246,6 @@ void Control1ms(void)
 
 	//姿态解算
 	Calculate_Attitude();
-
-
-//    float TargetA, TargetB;                         //目标速度
-//    float bias1, bias2, bias;                       //巡线、陀螺仪偏差
-
-//    /* 模式二、三 */
-//    if(Mode == 2 || Mode == 3)
-//    {
-       if(flag_FollowRoute == 1)
-       {
-           SpeedPID.Target = 30;
-           TurnPID.Target = 0;
-       }
-
-       else if(flag_FollowRoute == 2)
-       {
-           SpeedPID.Target = 30;
-           //循迹环PID,相当于TurnPID.Target = TracePID.Out
-           Trace_Tweak();
-       }
-
-       else if(flag_FollowRoute == 3)
-       {
-           SpeedPID.Target = 30;
-           TurnPID.Target = 0;       
-       }
-       else if(flag_FollowRoute == 4)
-       {
-           SpeedPID.Target = 30;
-           //循迹环PID,相当于TurnPID.Target = TracePID.Out
-           Trace_Tweak();
-       }
-//    }
-
 
 
 	//角度环PID

@@ -46,6 +46,7 @@ int main(void)
 	PID_Init(&SpeedPID);
 	PID_Init(&TurnPID);
 	PID_Init(&TracePID);
+	PID_Init(&YAWPID);
 	
 	/*测试使用*/
 //	Set_Motor1(-50);
@@ -70,15 +71,17 @@ int main(void)
 		
 //		ips200_show_float(0, 200, SpeedPID.Out,4,4);
 		ips200_show_float(0, 232, pitch,2,2);
-		ips200_show_uint(0, 264, stat1,1);
-		ips200_show_uint(15, 264, stat2,1);	
-		ips200_show_uint(30, 264, stat3,1);	
-		ips200_show_uint(45, 264, stat4,1);
-		ips200_show_int(0, 280, error,2);			
+//		ips200_show_uint(0, 264, stat1,1);
+//		ips200_show_uint(15, 264, stat2,1);	
+//		ips200_show_uint(30, 264, stat3,1);	
+//		ips200_show_uint(45, 264, stat4,1);
+//		ips200_show_int(0, 280, error,2);		
+		ips200_show_int(0, 280, flag_FollowRoute,1);
 		/*测试使用*/
 //		ips200_show_float(0,144,yaw_offset,4,4);	
-		BlueSerial_Printf("[plot,%f,%f]", TracePID.Actual, TracePID.Out);
+//		BlueSerial_Printf("[plot,%f,%f]", TracePID.Actual, TracePID.Out);
 //		BlueSerial_Printf("[plot,%d]", DifPWM);
+		BlueSerial_Printf("[plot,%f,%f]", yaw, yaw_target);
 	}
 }
 

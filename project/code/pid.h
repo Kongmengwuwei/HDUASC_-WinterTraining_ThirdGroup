@@ -29,13 +29,15 @@ typedef struct {
 
 extern int32 LeftPWM, RightPWM;
 extern int32 AvePWM, DifPWM;
-extern PID_t GyroPID, AnglePID, SpeedPID, TurnPID, TracePID;
+extern PID_t GyroPID, AnglePID, SpeedPID, TurnPID, TracePID, YAWPID;
+extern float yaw;
 
 void PID_Init(PID_t *p);
 void PID_Update(PID_t *p);
 void Gyro_Tweak (void);
 void Angle_Tweak (void);
 void Speed_Tweak (void);
+void YAW_Tweak(void);
 void Turn_Tweak(void);
 void Trace_Tweak(void);
 
