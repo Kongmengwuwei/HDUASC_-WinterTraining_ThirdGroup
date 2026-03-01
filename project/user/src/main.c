@@ -50,6 +50,7 @@ int main(void)
 	/*主循环*/
 	while(1)
 	{
+		Sensor_Check();			//循迹检测
 		key_event_scan();		//按键检测
 		Menu_Update();			//菜单刷新
 		BlueTooth_Update();	//蓝牙接收发送
@@ -59,26 +60,29 @@ int main(void)
 		ips200_show_string(0, 144, "RunFlag:");
 		ips200_show_uint(64, 144, RunFlag, 1);
 		
-		if(Mode==4 && Recorder_Flag==1){
-			ips200_show_string(96, 128, "Recording");
-		}		
-		else if(Mode==4 && Tracking_Flag==1){
-			ips200_show_string(96, 128, "Tracking ");
-		}
-		else{
-			ips200_show_string(96, 128, "         ");
-		}
+//		if(Mode==4 && Recorder_Flag==1){
+//			ips200_show_string(96, 128, "Recording");
+//		}		
+//		else if(Mode==4 && Tracking_Flag==1){
+//			ips200_show_string(96, 128, "Tracking ");
+//		}
+//		else{
+//			ips200_show_string(96, 128, "         ");
+//		}
 		
 		ips200_show_uint(0, 160, path_manager.count, 4);
-//		ips200_show_float(0, 160, path_manager.points[path_manager.count], 4,4);
 		ips200_show_uint(0, 176, path_manager.current_index, 4);
 		
 //		ips200_show_float(0, 200, SpeedPID.Out,4,4);
-		ips200_show_float(0, 232, pitch,4,4);	
+		ips200_show_float(0, 232, pitch,2,2);
+		ips200_show_uint(0, 264, stat1,1);
+		ips200_show_uint(15, 264, stat2,1);	
+		ips200_show_uint(30, 264, stat3,1);	
+		ips200_show_uint(45, 264, stat4,1);			
 		/*测试使用*/
 //		ips200_show_float(0,144,yaw_offset,4,4);	
 //		BlueSerial_Printf("[plot,%d,%d]", LeftPWM, RightPWM);
-		BlueSerial_Printf("[plot,%f,%f]", AveSpeed ,SpeedPID.Target);
+//		BlueSerial_Printf("[plot,%f,%f]", AveSpeed ,SpeedPID.Target);
 	}
 }
 

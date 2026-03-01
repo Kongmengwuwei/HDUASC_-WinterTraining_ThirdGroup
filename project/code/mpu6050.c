@@ -2,10 +2,9 @@
 #include "math.h"
 #include "stdio.h"
 
-float time=0.001;  	//时间1ms
-float Offset=0;   	//偏移
+float time=0.001;  	//时间间隔1ms
 
-float gyro_pitch, acc_pitch, pitch;
+float gyro_pitch, acc_pitch, pitch, pitch_offset=3.0;
 float yaw, yaw_offset=0;
 int16 AX, AY, AZ;
 
@@ -20,7 +19,7 @@ void Kalman_Init(KalmanFilter* kf,float Q_angle,float Q_bias,float R_measure) {
     kf->R_measure = R_measure;
 
     kf->angle = 0.0f;
-    kf->bias = -5.0f;
+    kf->bias = 0.0f;
     
     kf->P[0][0] = 0.0f;
     kf->P[0][1] = 0.0f;
@@ -93,5 +92,5 @@ void Calculate_Attitude(void)
 	// 获取陀螺仪原始角速度（转换为°/s）
 	float gyro_rate_raw = (mpu6050_gyro_y / 32768.0f) * 2000.0f;  // 假设量程为±2000°/s
 	
-	pitch=Kalman_Calculate(&KF, acc_pitch, gyro_rate_raw, time, &gyro_pitch);
+	pitch=Kalman_Calculate(&KF, acc_pitch, gyro_rate_raw, time, &gyro_pitch) + pitch_offset;
 }
