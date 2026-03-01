@@ -16,7 +16,7 @@
 #include "FollowRoute.h"
 #include "Path_Recorder.h"
 uint8 RunFlag = 0; 	//电机运行标志位
-uint8 Mode = 5; 		//发车模式
+uint8 Mode = 2; 		//发车模式
 uint8 Recorder_Flag=0, Tracking_Flag=0;
 uint8 flag2=0;
 
@@ -41,6 +41,12 @@ int main(void)
 	Pit_Init();											//定时中断初始化
 	interrupt_global_enable(0);
 	
+	PID_Init(&GyroPID);				
+	PID_Init(&AnglePID);
+	PID_Init(&SpeedPID);
+	PID_Init(&TurnPID);
+	PID_Init(&TracePID);
+	
 	/*测试使用*/
 //	Set_Motor1(-50);
 //	Set_Motor2(-50);
@@ -59,16 +65,6 @@ int main(void)
 		ips200_show_string(0, 144, "RunFlag:");
 		ips200_show_uint(64, 144, RunFlag, 1);
 		
-//		if(Mode==4 && Recorder_Flag==1){
-//			ips200_show_string(96, 128, "Recording");
-//		}		
-//		else if(Mode==4 && Tracking_Flag==1){
-//			ips200_show_string(96, 128, "Tracking ");
-//		}
-//		else{
-//			ips200_show_string(96, 128, "         ");
-//		}
-		
 		ips200_show_uint(0, 160, path_manager.count, 4);
 		ips200_show_uint(0, 176, path_manager.current_index, 4);
 		
@@ -81,7 +77,7 @@ int main(void)
 		ips200_show_int(0, 280, error,2);			
 		/*测试使用*/
 //		ips200_show_float(0,144,yaw_offset,4,4);	
-		BlueSerial_Printf("[plot,%f,%f,]", TracePID.Actual, TracePID.Out);
+		BlueSerial_Printf("[plot,%f,%f]", TracePID.Actual, TracePID.Out);
 //		BlueSerial_Printf("[plot,%d]", DifPWM);
 	}
 }

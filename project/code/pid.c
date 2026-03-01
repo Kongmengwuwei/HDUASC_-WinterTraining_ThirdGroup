@@ -24,12 +24,12 @@ PID_t SpeedPID = {
 	.ErrorIntMin = -30,
 };
 PID_t TurnPID = {
-	.OutMax = 80,
-	.OutMin = -80,
+	.OutMax = 10,
+	.OutMin = -10,
 };
 PID_t TracePID = {
-	.OutMax = 80,
-	.OutMin = 80,
+	.OutMax = 3,
+	.OutMin = -3,
 };
 
 
@@ -127,7 +127,7 @@ void Turn_Tweak(void)
 
 	TurnPID.Actual = DifSpeed;
 	PID_Update(&TurnPID);
-	DifPWM = TurnPID.Out * 100;
+	DifPWM = TurnPID.Out * 1000;
 }
 
 /*循迹环PID（结果输出给转向环）*/
@@ -137,7 +137,7 @@ void Trace_Tweak(void)
 	TracePID.Ki = parameter[5][1];
 	TracePID.Kd = parameter[5][2];
 	
-	TracePID.Actual = error;
+	TracePID.Actual = -error;
 	PID_Update(&TracePID);
 	TurnPID.Target = TracePID.Out;
 }

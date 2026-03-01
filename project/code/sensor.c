@@ -43,10 +43,8 @@ int8 Sensor_Check (void)
 		error = 2;
 	} else if(!stat1 && !stat2 && !stat3 && stat4) { /* 0 0 0 1 */
 		error = 6;
-	} else if(!stat1 && !stat2 && !stat3 && !stat4) { /* 0 0 0 0 */
-		error = error;
 	} else{
     error = 0;
-   }
+  }
 	return error;
 }
