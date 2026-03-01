@@ -20,7 +20,7 @@ void Kalman_Init(KalmanFilter* kf,float Q_angle,float Q_bias,float R_measure) {
     kf->R_measure = R_measure;
 
     kf->angle = 0.0f;
-    kf->bias = -1.0f;
+    kf->bias = -5.0f;
     
     kf->P[0][0] = 0.0f;
     kf->P[0][1] = 0.0f;

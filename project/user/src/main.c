@@ -103,7 +103,7 @@ void pit_handler(void)  //1ms¶¨Ê±ÖÐ¶Ï
 		if(Mode==4 && Tracking_Flag==1){
 			Navigation_Calculate();
 			SpeedPID.Target=Navigation_Speed;
-//		TurnPID.Target=Navigation_Turn;
+			TurnPID.Target=Navigation_Turn;
 		}
 		if(Mode!=4){
 			PathTracking_Init();

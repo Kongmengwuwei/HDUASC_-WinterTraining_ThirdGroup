@@ -39,7 +39,7 @@ void Navigation_Calculate(void)
 		Navigation_Speed = (target->left_speed + target->right_speed) / 2.0f;
 		
 		// 计算转向控制量
-		Navigation_Turn = target->yaw;     
+		Navigation_Turn = target->left_speed - target->right_speed;     
 		
 		// 检查是否到达目标点
 		path_manager.current_index++;					

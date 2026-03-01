@@ -17,11 +17,11 @@ PID_t AnglePID = {
 	.OutMin = -400,
 };
 PID_t SpeedPID = {
-	.OutMax = 25,
-	.OutMin = -25,
+	.OutMax = 20,
+	.OutMin = -20,
 	
-	.ErrorIntMax = 20,
-	.ErrorIntMin = -20,
+	.ErrorIntMax = 30,
+	.ErrorIntMin = -30,
 };
 PID_t TurnPID = {
 	.OutMax = 80,
