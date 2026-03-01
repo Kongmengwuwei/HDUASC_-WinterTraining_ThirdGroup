@@ -8,7 +8,7 @@ void Flash_Upload(void)
 	
 	uint8_t index = 0;													//按索引读取
 	
-	for(uint8_t mode = 0; mode < 5; mode++)
+	for(uint8_t mode = 0; mode < 6; mode++)
 	{
 		for(uint8_t row = 0; row < 3; row++)
 		{
@@ -27,7 +27,7 @@ void Flash_Download(void)
 	
 	uint8_t index = 0;													//按索引赋值
 	
-for(uint8_t mode = 0; mode < 5; mode++)
+for(uint8_t mode = 0; mode < 6; mode++)
 	{
 		for(uint8_t row = 0; row < 3;row++)
 		{

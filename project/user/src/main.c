@@ -35,7 +35,7 @@ int main(void)
 	Bluetooth_Init();								//蓝牙初始化
 	Menu_Init();										//菜单初始化
 	mpu6050_init();									//陀螺仪初始化
-	Kalman_Init(&KF, 0.0005f, 0.003f, 0.1f);		//卡尔曼姿态解算初始化
+	Kalman_Init(&KF, 0.0001f, 0.003f, 0.1f);		//卡尔曼姿态解算初始化
 	Encoder_Init();        					//编码器初始化
 	Motor_Init();										//电机初始化
 	Pit_Init();											//定时中断初始化
