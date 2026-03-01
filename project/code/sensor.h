@@ -10,9 +10,10 @@
 #define Flag_Hold	(5)
 
 void Sensor_Init(void);
-uint8 Sensor_Check (void);
+int8 Sensor_Check (void);
 
 extern uint8 flag, prev_stat, curr_stat;
-extern uint8 stat1, stat2, stat3, stat4 ;
+extern uint8 stat1, stat2, stat3, stat4;
+extern int8 error;
 
 #endif

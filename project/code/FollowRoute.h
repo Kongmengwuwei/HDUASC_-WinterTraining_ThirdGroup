@@ -7,7 +7,7 @@
 
 //extern volatile int mode;                                  //mode状态位：0-暂停；
 
-//extern uint8 RunFlag = 1; 	                               //电机运行标志位
+//extern uint8 RunFlag; 	                               //电机运行标志位
 
 
 //void Follow_Route(void);

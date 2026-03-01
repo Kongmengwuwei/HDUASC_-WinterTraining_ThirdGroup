@@ -1,6 +1,6 @@
 #include "sensor.h"
 
-uint8 error=0;
+int8 error=0;
 uint8 flag = 0, prev_stat = 0, curr_stat = 0;
 uint8 stat1 = 0, stat2 = 0, stat3 = 0, stat4 = 0;
 static uint16 cnt = 0;
@@ -15,7 +15,7 @@ void Sensor_Init (void)
 }
 
 /*¼ì²âÑ­¼£×´Ì¬*/
-uint8 Sensor_Check (void)
+int8 Sensor_Check (void)
 {
 	stat1 = gpio_get_level(SenSor1);
 	stat2 = gpio_get_level(SenSor2);

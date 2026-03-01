@@ -18,6 +18,7 @@
 uint8 RunFlag = 0; 	//电机运行标志位
 uint8 Mode = 5; 		//发车模式
 uint8 Recorder_Flag=0, Tracking_Flag=0;
+uint8 flag2=0;
 
 int main(void)
 {
@@ -39,8 +40,6 @@ int main(void)
 	Motor_Init();										//电机初始化
 	Pit_Init();											//定时中断初始化
 	interrupt_global_enable(0);
-
-	RunFlag=1;
 	
 	/*测试使用*/
 //	Set_Motor1(-50);
@@ -78,11 +77,12 @@ int main(void)
 		ips200_show_uint(0, 264, stat1,1);
 		ips200_show_uint(15, 264, stat2,1);	
 		ips200_show_uint(30, 264, stat3,1);	
-		ips200_show_uint(45, 264, stat4,1);			
+		ips200_show_uint(45, 264, stat4,1);
+		ips200_show_int(0, 280, error,2);			
 		/*测试使用*/
 //		ips200_show_float(0,144,yaw_offset,4,4);	
-//		BlueSerial_Printf("[plot,%d,%d]", LeftPWM, RightPWM);
-//		BlueSerial_Printf("[plot,%f,%f]", AveSpeed ,SpeedPID.Target);
+		BlueSerial_Printf("[plot,%f,%f,]", TracePID.Actual, TracePID.Out);
+//		BlueSerial_Printf("[plot,%d]", DifPWM);
 	}
 }
 
@@ -115,6 +115,16 @@ void pit_handler(void)  //1ms定时中断
 		
 		//速度环PID	
 	  Speed_Tweak();
+		
+		if(Mode == 2){
+			flag2 = 1;
+			//循迹环PID
+			Trace_Tweak();
+		}
+		else if (flag2 == 1){
+			flag2=0;
+			TurnPID.Target =0 ;
+		}
 		
 		//转向环PID	
 		Turn_Tweak();

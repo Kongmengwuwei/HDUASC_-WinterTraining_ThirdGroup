@@ -106,7 +106,6 @@
 //                        SoundLight_On();              //鸣笛并闪灯
 //                        flag = 2;               //进入下一状态
 //                        cnt3 = 0;
-//                        return 2;
 //                    }
 //                }
 //                else   cnt3 = 0;
@@ -123,7 +122,6 @@
 //                        SoundLight_On();              //鸣笛并闪灯
 //                        flag = 3;
 //                        cnt3 = 0;
-//                        return 3;
 //                    }
 //                }
 //            }
@@ -139,7 +137,6 @@
 //                        SoundLight_On();              //鸣笛并闪灯
 //                        flag = 4;
 //                        cnt3 = 0;
-//                        return 4;
 //                    }
 //                }
 //            }
@@ -155,7 +152,6 @@
 //                        SoundLight_On();              //鸣笛并闪灯
 //                        flag = 0;                     //停止
 //                        cnt3 = 0;
-//                        return 0;
 //                    }
 //                }
 //            }

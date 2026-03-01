@@ -193,6 +193,7 @@ void Menu_Update(void)
 				PID_Init(&AnglePID);
 				PID_Init(&SpeedPID);
 				PID_Init(&TurnPID);
+				PID_Init(&TracePID);
 				ips200_show_string(64,32,"GO    ");
 				ips200_show_string(64,32,"  Over");
 				}
@@ -204,9 +205,9 @@ void Menu_Update(void)
 	else if(curr_menu == Edit)
 	{
 		static uint8 flag = 0;
-		ips200_show_float(64,16,parameter[pidmode][0],2,2);
-		ips200_show_float(64,32,parameter[pidmode][1],2,2);
-		ips200_show_float(64,48,parameter[pidmode][2],2,2);
+		ips200_show_float(64,16,parameter[pidmode][0],4,2);
+		ips200_show_float(64,32,parameter[pidmode][1],4,2);
+		ips200_show_float(64,48,parameter[pidmode][2],4,2);
 		if(!flag)
 		{
 			if(k1 == KEY_EVENT_CLICK)Menu_MoveCursor(-1,min_row,max_row);

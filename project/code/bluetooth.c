@@ -121,6 +121,7 @@ void BlueTooth_Update (void)
 						PID_Init(&AnglePID);
 						PID_Init(&SpeedPID);
 						PID_Init(&TurnPID);
+						PID_Init(&TracePID);
 						RunFlag=1;
 				}	
 				if (strcmp(Name, "1") == 0 && strcmp(Action, "up") == 0)
@@ -202,6 +203,22 @@ void BlueTooth_Update (void)
 				else if (strcmp(Name, "TurnKd") == 0)
 				{
 					parameter[4][2] = atof(Value);
+				}
+				else if (strcmp(Name, "TraceKp") == 0)
+				{
+					parameter[5][0] = atof(Value);
+				}
+				else if (strcmp(Name, "TraceKi") == 0)
+				{
+					parameter[5][1] = atof(Value);
+				}
+				else if (strcmp(Name, "TraceKd") == 0)
+				{
+					parameter[5][2] = atof(Value);
+				}
+				else if (strcmp(Name, "Speed") == 0)
+				{
+					SpeedPID.Target = atof(Value);
 				}
 			}
 			
