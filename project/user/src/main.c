@@ -122,8 +122,11 @@ void pit_handler(void)  //1ms定时中断
 			TurnPID.Target =0 ;
 		}
 		
+		if(Mode!=4 || Recorder_Flag!=1)
+		{
 		//转向环PID	
-		Turn_Tweak();
+		Turn_Tweak();			
+		}
 	}
 
 	

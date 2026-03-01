@@ -12,7 +12,7 @@ typedef struct {
 
 // 路径记录结构
 typedef struct {
-    PathPoint_t points[2000];   // 最大记录2000个点
+    PathPoint_t points[3000];   // 最大记录2000个点
     uint16_t count;             // 当前路径点数
     uint16_t current_index;     // 当前复现索引
 } PathManager_t;
