@@ -32,10 +32,10 @@ PID_t TracePID = {
 	.OutMin = -3,
 };
 PID_t YAWPID = {
-	.OutMax = 2,
-	.OutMin = -2,
-	.ErrorIntMax = 20,
-	.ErrorIntMin = -20,
+	.OutMax = 1,
+	.OutMin = -1,
+	.ErrorIntMax = 2,
+	.ErrorIntMin = -2,
 };
 
 
@@ -152,9 +152,9 @@ void Trace_Tweak(void)
 /*定yaw角PID（结果输出给转向环），类似循迹环PID*/
 void YAW_Tweak(void)
 {
-	YAWPID.Kp = 3.0;
-	YAWPID.Ki = 0.2;
-	YAWPID.Kd = 0.1;
+	YAWPID.Kp = 0.03;
+	YAWPID.Ki = 0.01;
+	YAWPID.Kd = 0.01;
 	
 	YAWPID.Actual = yaw;
 	PID_Update(&YAWPID);

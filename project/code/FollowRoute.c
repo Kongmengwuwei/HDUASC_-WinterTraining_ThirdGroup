@@ -186,7 +186,7 @@ void Control5ms(void)
         //循迹环PID
         if(flag_FollowRoute == 1)
         {
-            SpeedPID.Target = 0.30;
+            SpeedPID.Target = 0.40;
 //            TurnPID.Target = 0;
 			YAWPID.Target = yaw_target;
             YAW_Tweak();
@@ -194,21 +194,21 @@ void Control5ms(void)
 
         else if(flag_FollowRoute == 2)
         {
-            SpeedPID.Target = 0.30;
+            SpeedPID.Target = 0.40;
             //循迹环PID,相当于TurnPID.Target = TracePID.Out
             Trace_Tweak();
         }
 
         else if(flag_FollowRoute == 3)
         {
-            SpeedPID.Target = 0.30;
+            SpeedPID.Target = 0.40;
 //            TurnPID.Target = 0;
 			YAWPID.Target = yaw_target;
             YAW_Tweak();   
         }
         else if(flag_FollowRoute == 4)
         {
-            SpeedPID.Target = 0.30;
+            SpeedPID.Target = 0.40;
             //循迹环PID,相当于TurnPID.Target = TracePID.Out
             Trace_Tweak();
         }
