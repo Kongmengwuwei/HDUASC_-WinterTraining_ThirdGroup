@@ -152,9 +152,9 @@ void Trace_Tweak(void)
 /*定yaw角PID（结果输出给转向环），类似循迹环PID*/
 void YAW_Tweak(void)
 {
-	YAWPID.Kp = 0.2;
-	YAWPID.Ki = 0;
-	YAWPID.Kd = 0.1;
+	YAWPID.Kp = parameter[6][0];
+	YAWPID.Ki = parameter[6][1];
+	YAWPID.Kd = parameter[6][2];
 	
 	YAWPID.Actual = yaw;
 	PID_Update(&YAWPID);
