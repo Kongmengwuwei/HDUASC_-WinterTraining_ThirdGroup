@@ -102,7 +102,7 @@ void Follow_Route(void)
    {
 		if (RunFlag == 0)
 	   {
-			yaw_target = yaw - 40;
+			yaw_target = yaw - 38;
 			flag_round = 0;    //圈数标志位
 	   }
         static int cnt3 = 0;
@@ -113,7 +113,7 @@ void Follow_Route(void)
             if(stat1 || stat2 || stat3 || stat4)        //任一点检测到黑线
             {
                 cnt3++;
-                if(cnt3 > 10)               //检测到黑线持续5次
+                if(cnt3 > 15)               //检测到黑线持续15次
                 {
                     SoundLight_On();              //鸣笛并闪灯
                     flag_FollowRoute = 2;               //进入下一状态
@@ -129,7 +129,7 @@ void Follow_Route(void)
             if(!(stat1 || stat2 || stat3 || stat4))              //所有点检测到白线
             {
                 cnt3++;
-                if(cnt3 > 60)                             //检测到白线持续60次（避免车在C点冲出去检测不到黑线）
+                if(cnt3 > 80)                             //检测到白线持续70次（避免车在C点冲出去检测不到黑线）
                 {
                     SoundLight_On();              //鸣笛并闪灯
                     flag_FollowRoute = 3;
@@ -145,7 +145,7 @@ void Follow_Route(void)
             if(stat1 || stat2 || stat3 || stat4)        //任一点检测到黑线
             {
                 cnt3++;
-                if(cnt3 > 10)                      //检测到黑线持续5次
+                if(cnt3 > 15)                      //检测到黑线持续15次
                 {
                     SoundLight_On();              //鸣笛并闪灯
                     flag_FollowRoute = 4;
@@ -160,7 +160,7 @@ void Follow_Route(void)
             if(!(stat1 || stat2 || stat3 || stat4))             //所有点检测到白线
             {
                 cnt3++;
-                if(cnt3 > 60)                      //检测到白线持续50次
+                if(cnt3 > 80)                      //检测到白线持续50次
                 {
                     SoundLight_On();              //鸣笛并闪灯
                     flag_FollowRoute = 1;                     //下一次循环
@@ -171,6 +171,7 @@ void Follow_Route(void)
                     {
                         flag_round = 0;                   //第四圈结束
                         flag_FollowRoute = 0;                      //停止运行
+						
                     }
                 }
             }
@@ -185,44 +186,87 @@ void Follow_Route(void)
 
 
 
+
+uint16 cnt_slowdown = 0;           //循迹前提前减速，避免冲出黑线导致错误
+uint16 cnt_speedup = 0;            //循迹后慢慢加速，避免刚循迹时角度太大冲出黑线
+
+
 /*根据任务状态使用循迹PID与定yaw角PID*/
 void Follow_Route_Tweak(void)
 {        
-	if(Mode == 2 || Mode == 3)
+	if(RunFlag == 1 && (Mode == 2 || Mode == 3))
 	{
 		flag2 = 1;
-		//循迹环PID
+		//yaw环PID
 		if(flag_FollowRoute == 1)
 		{
-			SpeedPID.Target = 0.40;
-//    TurnPID.Target = 0;
+			cnt_speedup = 0;          //不用加速，重置cnt_speedup
+			if (cnt_slowdown < 450)
+			{
+				SpeedPID.Target = 0.50;
+				cnt_slowdown += 1;
+			}
+			else
+			{
+				SpeedPID.Target = 0.30;      //提前减速
+			}
+			
 			YAWPID.Target = yaw_target;
 			YAW_Tweak();
 		}
 
 		else if(flag_FollowRoute == 2)
 		{
-			SpeedPID.Target = 0.40;
+			cnt_slowdown = 0;          //不用减速，重置cnt_slowdown
+			if (cnt_speedup < 100)
+			{
+				SpeedPID.Target = 0.30;
+				cnt_speedup += 1;
+			}
+			else
+			{
+				SpeedPID.Target = 0.40;
+			}
 			//循迹环PID
 			Trace_Tweak();
 		}
-
+		//yaw环PID
 		else if(flag_FollowRoute == 3)
 		{
-			SpeedPID.Target = 0.40;
-//    TurnPID.Target = 0;
+			cnt_speedup = 0;
+			if (cnt_slowdown < 450)
+			{
+				SpeedPID.Target = 0.50;
+				cnt_slowdown += 1;
+			}
+			else
+			{
+				SpeedPID.Target = 0.30;      //提前减速
+			}
 			YAWPID.Target = yaw_target;
 			YAW_Tweak();   
 		}
 		else if(flag_FollowRoute == 4)
 		{
-			SpeedPID.Target = 0.40;
+			cnt_slowdown = 0;          //不用减速，重置cnt_slowdown
+			if (cnt_speedup < 100)
+			{
+				SpeedPID.Target = 0.30;
+				cnt_speedup += 1;
+			}
+			else
+			{
+				SpeedPID.Target = 0.40;
+			}
 			//循迹环PID
 			Trace_Tweak();
 		}
 		else if(flag_FollowRoute == 0)
 		{
-			RunFlag = 0;
+			cnt_slowdown = 0;          //不用减速，重置cnt_slowdown
+			cnt_speedup = 0;
+			SpeedPID.Target = 0;
+			TurnPID.Target = 0;
 		}
 	}
     else if (flag2)
