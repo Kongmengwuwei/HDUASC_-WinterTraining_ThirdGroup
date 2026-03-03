@@ -17,6 +17,7 @@ typedef struct {
     float left_speed;
     float right_speed;
     float yaw;
+	float distance;
 } PathPoint_t;
 
 typedef struct {

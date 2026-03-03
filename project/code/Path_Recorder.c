@@ -12,15 +12,17 @@ extern uint8 Recorder_Flag, Tracking_Flag;
 
 PathManager_t path_manager;
 float Navigation_Speed, Navigation_Turn;
-float Yaw_offset = 0;           // 新增：yaw偏移量
-float Yaw_start_record = 0;     // 新增：录制起始yaw
+float Yaw_offset = 0;           // yaw偏移量
+float Yaw_start_record = 0;     // 录制起始yaw
+static float total_distance = 0;
+static float replay_distance = 0;
 
 // Flash头部结构
 typedef struct {
     uint32_t magic;
     uint16_t count;
     uint16_t checksum;
-	float yaw_start;            // 新增：保存录制起始yaw
+	float yaw_start;            // 保存录制起始yaw
     uint32_t reserved;
 } FlashHeader_t;
 
@@ -55,6 +57,7 @@ void PathRecording_Start(void)
 {
     PathTracking_Init();
     Yaw_start_record = yaw;     // 记录起始yaw
+	total_distance = 0;    // 清零
 }
 
 // 开始回放时调用
@@ -63,6 +66,7 @@ void PathTracking_Start(void)
     path_manager.current_index = 0;
     // 计算yaw偏移：当前yaw - 录制时的起始yaw
     Yaw_offset = yaw - Yaw_start_record;
+	    replay_distance = 0;
 }
 
 void Record_PathPoint(void)
@@ -77,6 +81,12 @@ void Record_PathPoint(void)
     p->left_speed = LeftSpeed;
     p->right_speed = RightSpeed;
     p->yaw = yaw;
+	
+	// 累计位移
+    float ave_speed = (LeftSpeed + RightSpeed) / 2.0f;
+    total_distance += fabsf(ave_speed) * 0.005f;
+    p->distance = total_distance;
+	
     path_manager.count++;
 }
 
@@ -96,7 +106,16 @@ void Navigation_Calculate(void)
             path_manager.current_index = 0;
             return;
         }
-        
+        extern float AveSpeed;
+        replay_distance += fabsf(AveSpeed) * 0.005f;
+		// 找到匹配的路径点
+        while (path_manager.current_index < path_manager.count - 1)
+        {
+            if (path_manager.points[path_manager.current_index].distance >= replay_distance)
+                break;
+            path_manager.current_index++;
+        }
+		
         PathPoint_t *target = &path_manager.points[path_manager.current_index];
         
         float target_ave_speed = (target->left_speed + target->right_speed) / 2.0f;
@@ -115,14 +134,14 @@ void Navigation_Calculate(void)
 		if (fabsf(yaw_error) > 5.0f)
         {
             // 限制修正量，避免过猛
-            if (yaw_error > 30.0f) yaw_error = 30.0f;
-            if (yaw_error < -30.0f) yaw_error = -30.0f;
+            if (yaw_error > 60.0f) yaw_error = 60.0f;
+            if (yaw_error < -60.0f) yaw_error = -60.0f;
             
             yaw_correction = -YAW_CORRECTION_KP * yaw_error;
             
             // 限制修正输出
-            if (yaw_correction > 0.3f) yaw_correction = 0.3f;
-            if (yaw_correction < -0.3f) yaw_correction = -0.3f;
+            if (yaw_correction > 1.2f) yaw_correction = 1.2f;
+            if (yaw_correction < -1.2f) yaw_correction = -1.2f;
 			}
 		}
         SpeedPID.Target = target_ave_speed;
