@@ -162,7 +162,7 @@ void Path_SaveToFlash(void)
     header.magic = FLASH_MAGIC_WORD;
     header.count = path_manager.count;
     header.checksum = Calculate_Checksum();
-	header.yaw_start = Yaw_start_record;    // 保存起始yaw
+		header.yaw_start = Yaw_start_record;    // 保存起始yaw
     header.reserved = 0;
 	
     uint32_t page_size = FLASH_DATA_BUFFER_SIZE * 4;

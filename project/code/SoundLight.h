@@ -4,6 +4,7 @@
 #include "zf_common_headfile.h"
 
 #define SoundLight		(D4)
+#define BEEP          (B11)
 
 void SoundLight_Init(void);
 void SoundLight_On(void);
