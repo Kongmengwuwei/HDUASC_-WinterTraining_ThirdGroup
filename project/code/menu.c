@@ -6,6 +6,7 @@
 #include "Path_Recorder.h"
 
 extern uint8 RunFlag, Mode, Recorder_Flag, Tracking_Flag;
+
 int load_flag = 0;
 Menu curr_menu = Main;
 uint8_t menu_cursor = 0;

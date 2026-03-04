@@ -7,7 +7,7 @@
 #define BEEP          (B11)
 
 void SoundLight_Init(void);
-void SoundLight_On(void);
+void SoundLight_On (void);
 void SoundLight_Off(void);
 
 #endif

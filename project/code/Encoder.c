@@ -34,8 +34,8 @@ void Speed_Get(void)
 		RightSpeed = speed_filter * (rightcount  / 44.0 / 0.005 / 30.0) + (1-speed_filter)* Last_RightSpeed;
 		Last_LeftSpeed=LeftSpeed;
 		Last_RightSpeed=RightSpeed;
-		if(Last_LeftSpeed-LeftSpeed>=0.5 || Last_LeftSpeed-LeftSpeed<=-0.5)LeftSpeed=Last_LeftSpeed;
-		if(Last_RightSpeed-RightSpeed>=0.5 || Last_RightSpeed-RightSpeed<=-0.5)RightSpeed=Last_RightSpeed;	
+		if(Last_LeftSpeed-LeftSpeed>=0.3 || Last_LeftSpeed-LeftSpeed<=-0.3)LeftSpeed=Last_LeftSpeed;
+		if(Last_RightSpeed-RightSpeed>=0.3 || Last_RightSpeed-RightSpeed<=-0.3)RightSpeed=Last_RightSpeed;	
 	
 }	
 	

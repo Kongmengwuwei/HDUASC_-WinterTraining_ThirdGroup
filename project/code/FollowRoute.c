@@ -4,7 +4,7 @@
 #include "SoundLight.h"
 #include "menu.h"
 
-extern uint8 Mode, RunFlag, flag2;
+extern uint8 Mode, RunFlag, SoundLightFlag, flag2;
 extern float yaw;
 
 int flag_FollowRoute = 1;                                  //flag状态位：0-暂停；1-AB；2-BC；3-CD；4-DA；
@@ -14,15 +14,10 @@ uint8_t flag_round = 0;                                    //圈数标志位
 uint16_t cnt_FollowLine = 0;                               //巡线时避免过早检测B点和A点
 
 
-
-
-
-
 /*根据循线检测更新任务状态*/
 void Follow_Route(void)
 {
    
-
 	stat1 = gpio_get_level(SenSor1);
 	stat2 = gpio_get_level(SenSor2);
 	stat3 = gpio_get_level(SenSor3);
@@ -46,7 +41,7 @@ void Follow_Route(void)
 				   cnt2++;
 				   if(cnt2 > 10)             //检测到黑线持续5次
 				   {
-					   SoundLight_On();              //鸣笛并闪灯
+					   SoundLightFlag = 1;              //鸣笛并闪灯
 					   flag_FollowRoute = 2;               //进入状态二
 					   cnt_FollowLine = 0;
 					   cnt2 = 0;
@@ -69,7 +64,7 @@ void Follow_Route(void)
 				   cnt2 ++;
 				   if(cnt2 > 50)               //检测到白线持续5次
 				   {
-					   SoundLight_On();              //鸣笛并闪灯
+					   SoundLightFlag = 1;              //鸣笛并闪灯
 					   flag_FollowRoute = 3;
 					   cnt_FollowLine = 0;
 					   cnt2 = 0;
@@ -94,7 +89,7 @@ void Follow_Route(void)
 				   cnt2++;
 				   if(cnt2 > 10)                //检测到黑线持续Black_CNT2次
 				   {
-					   SoundLight_On();              //鸣笛并闪灯 
+					   SoundLightFlag = 1;              //鸣笛并闪灯						 
 					   flag_FollowRoute = 4;
 					   cnt_FollowLine = 0;
 					   cnt2 = 0;
@@ -118,7 +113,7 @@ void Follow_Route(void)
 				   cnt2++;
 				   if(cnt2 > 50 )                  //检测到白线持续White_CNT4次
 				   {
-					   SoundLight_On();              //鸣笛并闪灯
+					   SoundLightFlag = 1;             //鸣笛并闪灯
 					   flag_FollowRoute = 0;           //一圈结束
 					   cnt_FollowLine = 0;
 					   cnt2 = 0;
@@ -159,7 +154,7 @@ void Follow_Route(void)
 					cnt3++;
 					if(cnt3 > 15)               //检测到黑线持续15次
 					{
-						SoundLight_On();              //鸣笛并闪灯
+						SoundLightFlag = 1;             //鸣笛并闪灯
 						flag_FollowRoute = 2;               //进入下一状态
 						cnt_FollowLine = 0;
 						cnt3 = 0;
@@ -185,7 +180,7 @@ void Follow_Route(void)
 					cnt3++;
 					if(cnt3 > 60)                             //检测到白线持续30次（避免车在C点冲出去检测不到黑线）
 					{
-						SoundLight_On();              //鸣笛并闪灯
+						SoundLightFlag = 1;              //鸣笛并闪灯
 						flag_FollowRoute = 3;
 						cnt_FollowLine = 0;
 						cnt3 = 0;
@@ -210,7 +205,7 @@ void Follow_Route(void)
 					cnt3++;
 					if(cnt3 > 15)                      //检测到黑线持续15次
 					{
-						SoundLight_On();              //鸣笛并闪灯
+						SoundLightFlag = 1;               //鸣笛并闪灯
 						flag_FollowRoute = 4;
 						cnt_FollowLine = 0;
 						cnt3 = 0;
@@ -233,7 +228,7 @@ void Follow_Route(void)
 					cnt3++;
 					if(cnt3 > 60)                      //检测到白线持续50次
 					{
-						SoundLight_On();              //鸣笛并闪灯
+						SoundLightFlag = 1;               //鸣笛并闪灯
 						flag_FollowRoute = 1;                     //下一次循环
 						cnt_FollowLine = 0;
 						cnt3 = 0;
