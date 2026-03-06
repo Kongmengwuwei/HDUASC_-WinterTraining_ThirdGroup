@@ -228,7 +228,7 @@ void BlueTooth_Update (void)
 				/*模式五功能*/
 				if(Mode==5)
 				{
-					SpeedPID.Target = LV / 250.0;				//控制前后加速
+					SpeedPID.Target = LV / 300.0;				//控制前后加速
 					TurnPID.Target = RH / 100.0;				//控制左右转向
 				}
 				
